@@ -24,7 +24,7 @@ const (
 	Induzida
 	Developing
 	PetBottle
-	E:mpty
+	Empty
 )
 
 type Colmeia struct {
