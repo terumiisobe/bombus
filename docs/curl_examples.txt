@@ -1,0 +1,15 @@
+
+Everything at localhost for now.
+
+
+
+curl -X GET http://localhost:8080/colmeia/
+
+curl -X GET http://localhost:8080/colmeia/1
+
+
+curl -X POST http://localhost:8080/colmeia/ \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "colmeiaID": "1", "species": 0, "startingDate":"2025-04-02T15:04:05Z", "status": 0 }'
+
+curl -X DELETE http://localhost:8080/colmeia/1

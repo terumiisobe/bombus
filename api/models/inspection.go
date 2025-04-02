@@ -18,8 +18,8 @@ const (
 )
 
 type Inspection struct {
-	ID             uint           `gorm:"primaryKey;autoIncrement"`
-	ColmeiaID      uint           `gorm:"not null;index"` // Foreign Key to Colmeia Table
+	ID             int            `gorm:"primaryKey;autoIncrement"`
+	ColmeiaID      int            `gorm:"not null;index"` // Foreign Key to Colmeia Table
 	Colmeia        Colmeia        `gorm:"foreignKey:ColmeiaID;constraint:OnDelete:CASCADE;"` // Relationship
 	InspectionDate time.Time      `gorm:"not null"`
 	PreviousStatus Status         `gorm:"type:int;not null"` // Enum stored as int

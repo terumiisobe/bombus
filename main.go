@@ -2,9 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
-	//"github.com/terumiisobe/bombus/api/models"
 	"github.com/terumiisobe/bombus/db"
+	"github.com/terumiisobe/bombus/api/routes"
 	"log"	
 )
 
@@ -15,11 +14,7 @@ func main() {
 
 	// Create a new router
 	r := gin.Default() // or gin.New()
-
-	// Define routes
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello, world!"})
-	})
+	routes.RegisterRoutes(r)
 
 	// Start server
 	r.Run(":8080")

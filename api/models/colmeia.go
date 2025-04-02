@@ -28,7 +28,7 @@ const (
 )
 
 type Colmeia struct {
-	ID                 uint           `gorm:"primaryKey;autoIncrement"`
+	ID                 int            `gorm:"primaryKey;autoIncrement"`
 	ColmeiaID          string         `gorm:"type:varchar(100);not null"` // Additional visual ID
 	QRCode             *string        `gorm:"type:varchar(255);unique"` // Can be NULL
 	Species            Species        `gorm:"type:int;not null"`
