@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/terumiisobe/bombus/db"
 	"github.com/terumiisobe/bombus/api/routes"
-	"log"	
+	"github.com/terumiisobe/bombus/db"
+	"log"
 )
 
 func main() {
@@ -21,4 +21,3 @@ func main() {
 
 	log.Println("✅ Application running")
 }
-
