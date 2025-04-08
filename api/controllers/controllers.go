@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/terumiisobe/bombus/api/services"
 	"github.com/gin-gonic/gin"
+	"github.com/terumiisobe/bombus/api/services"
 	"net/http"
 	"strconv"
 )
