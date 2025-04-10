@@ -19,12 +19,16 @@ func GetColmeia(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
 		return
 	}
-	colmeia := services.GetColmeia(colmeiaID)
-	c.JSON(http.StatusOK, colmeia)
+	colmeia, err := services.GetColmeia(colmeiaID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Not Found"})
+		return
+	}
+	c.JSON(http.StatusOK, *colmeia)
 }
 
 func CreateColmeia(c *gin.Context) {
-	var colmeia services.Colmeia
+	var colmeia services.Colmeiasss
 	if err := c.ShouldBindJSON(&colmeia); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

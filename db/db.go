@@ -1,10 +1,10 @@
 package db
 
 import (
-	"log"
+	"github.com/terumiisobe/bombus/api/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"github.com/terumiisobe/bombus/api/models"
+	"log"
 )
 
 var DB *gorm.DB
@@ -17,7 +17,7 @@ func ConnectDB() {
 	}
 
 	// Auto-Migrate Tables
-	DB.AutoMigrate(&models.Colmeia{}, &models.Inspection{})
+	DB.AutoMigrate(&models.ColmeiaModel{}, &models.Inspection{})
 
 	log.Println("✅ Database Connected & Migrated Successfully!")
 }

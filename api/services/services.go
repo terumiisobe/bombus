@@ -9,36 +9,42 @@ import (
 	"github.com/terumiisobe/bombus/api/repository"
 )
 
-type Colmeia struct {
-	ID                 int
-	ColmeiaID          string  // Additional visual ID
-	QRCode             *string // Can be NULL
-	Species            models.Species
-	StartingDate       time.Time
-	Status             models.Status
-	RequiresInspection bool
-	RequiresMelgueira  bool
+type ColmeiaService struct {
+	ID                 int            `json:"id"`
+	ColmeiaID          string         `json:"colmeia_id"` // Additional visual ID
+	QRCode             *string        `json:"qrcode"`     // Can be NULL
+	Species            models.Species `json:"species"`
+	StartingDate       time.Time      `json:"starting_date"`
+	Status             models.Status  `json:"status"`
+	RequiresInspection bool           `json:"requires_inspection"`
+	RequiresMelgueira  bool           `json:"requires_melgueira"`
 }
 
-func FetchColmeias() []models.Colmeia {
+func (s *ColmeiaService) toModel() *models.ColmeiaModel {
+	return &models.ColmeiaModel{}
+}
+
+func FetchColmeias() []models.ColmeiaModel {
 	colmeias, err := repository.GetColmeias()
 	if err != nil {
 		log.Println("Database error: " + err.Error())
+		return nil
 	}
 	return colmeias
 }
 
-func GetColmeia(id int) models.Colmeia {
+func GetColmeia(id int) (*models.ColmeiaModel, error) {
 	colmeia, err := repository.GetColmeia(id)
 	if err != nil {
 		log.Println("Database error: " + err.Error())
+		return nil, err
 	}
-	return colmeia
+	return &colmeia, nil
 }
 
-func CreateColmeia(colmeia Colmeia) string {
-	// Save user to DB (Placeholder)
-	return "new colmeia created"
+func CreateColmeia(colmeia ColmeiaService) error {
+	err := repository.CreateColmeia(colmeia)
+	return err
 }
 
 func DeleteColmeia(id int) string {
