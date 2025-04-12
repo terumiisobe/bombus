@@ -25,7 +25,7 @@ func CreateColmeia(colmeia models.ColmeiaModel) error {
 	return result.Error
 }
 
-func DeleteColmeia(id int) error {
+func DeleteColmeia(id int) (int, error) {
 	result := db.DB.Delete(&models.ColmeiaModel{}, id)
-	return result.Error
+	return int(result.RowsAffected), result.Error
 }

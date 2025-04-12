@@ -41,5 +41,3 @@ type ColmeiaModel struct {
 	UpdatedAt time.Time      // Auto-managed by GORM
 	DeletedAt gorm.DeletedAt `gorm:"index"` // Soft delete support
 }
-
-func (m *ColmeiaModel) ToService() *Ser

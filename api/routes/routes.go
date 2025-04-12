@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/terumiisobe/bombus/api/controllers"
 	"github.com/gin-gonic/gin"
+	"github.com/terumiisobe/bombus/api/controllers"
 )
 
 func RegisterRoutes(r *gin.Engine) {

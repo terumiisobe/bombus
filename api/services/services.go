@@ -2,7 +2,6 @@ package services
 
 import (
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/terumiisobe/bombus/api/models"
@@ -21,7 +20,16 @@ type ColmeiaService struct {
 }
 
 func (s *ColmeiaService) toModel() *models.ColmeiaModel {
-	return &models.ColmeiaModel{}
+	return &models.ColmeiaModel{
+		ID:                 s.ID,
+		ColmeiaID:          s.ColmeiaID,
+		QRCode:             s.QRCode,
+		Species:            s.Species,
+		StartingDate:       s.StartingDate,
+		Status:             s.Status,
+		RequiresInspection: s.RequiresInspection,
+		RequiresMelgueira:  s.RequiresMelgueira,
+	}
 }
 
 func FetchColmeias() []models.ColmeiaModel {
@@ -43,10 +51,14 @@ func GetColmeia(id int) (*models.ColmeiaModel, error) {
 }
 
 func CreateColmeia(colmeia ColmeiaService) error {
-	err := repository.CreateColmeia(colmeia)
+	err := repository.CreateColmeia(*colmeia.toModel())
 	return err
 }
 
-func DeleteColmeia(id int) string {
-	return "colmeia deleted " + strconv.Itoa(id)
+func DeleteColmeia(id int) error {
+	rowsAffected, err := repository.DeleteColmeia(id)
+	if rowsAffected == 0 {
+
+	}
+	return err
 }

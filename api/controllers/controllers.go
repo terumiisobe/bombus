@@ -28,7 +28,7 @@ func GetColmeia(c *gin.Context) {
 }
 
 func CreateColmeia(c *gin.Context) {
-	var colmeia services.Colmeiasss
+	var colmeia services.ColmeiaService
 	if err := c.ShouldBindJSON(&colmeia); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -39,11 +39,12 @@ func CreateColmeia(c *gin.Context) {
 
 func DeleteColmeia(c *gin.Context) {
 	paramID := c.Param("id")
-	colmeiaID, err := strconv.Atoi(paramID)
+	colmeiaID, _ := strconv.Atoi(paramID)
+	// todo: create validation when receivin from api to avoid conversion
+	err := services.DeleteColmeia(colmeiaID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	services.DeleteColmeia(colmeiaID)
 	c.JSON(http.StatusOK, gin.H{"message": "Colmeia deleted"})
 }
