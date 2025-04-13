@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -57,8 +58,12 @@ func CreateColmeia(colmeia ColmeiaService) error {
 
 func DeleteColmeia(id int) error {
 	rowsAffected, err := repository.DeleteColmeia(id)
+	if err != nil {
+		log.Println("Database error: " + err.Error())
+		return err
+	}
 	if rowsAffected == 0 {
-
+		return errors.New("Not found")
 	}
 	return err
 }

@@ -21,7 +21,7 @@ func GetColmeia(c *gin.Context) {
 	}
 	colmeia, err := services.GetColmeia(colmeiaID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Not Found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
 		return
 	}
 	c.JSON(http.StatusOK, *colmeia)
