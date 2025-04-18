@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/terumiisobe/bombus/api/services"
 	"net/http"
 	"strconv"
 )
+
+var validate = validator.New()
 
 func GetColmeias(c *gin.Context) {
 	colmeias := services.FetchColmeias()
@@ -30,6 +33,10 @@ func GetColmeia(c *gin.Context) {
 func CreateColmeia(c *gin.Context) {
 	var colmeia services.ColmeiaService
 	if err := c.ShouldBindJSON(&colmeia); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := validate.Struct(colmeia); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

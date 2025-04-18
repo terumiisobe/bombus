@@ -10,26 +10,26 @@ import (
 )
 
 type ColmeiaService struct {
-	ID                 int            `json:"id"`
-	ColmeiaID          string         `json:"colmeia_id"` // Additional visual ID
-	QRCode             *string        `json:"qrcode"`     // Can be NULL
-	Species            models.Species `json:"species"`
-	StartingDate       time.Time      `json:"starting_date"`
-	Status             models.Status  `json:"status"`
-	RequiresInspection bool           `json:"requires_inspection"`
-	RequiresMelgueira  bool           `json:"requires_melgueira"`
+	ID                 *int           `json:"id"`
+	ColmeiaID          *string        `json:"colmeia_id"` // Additional visual ID
+	QRCode             *string        `json:"qrcode"`
+	Species            models.Species `json:"species" validate:"required"`
+	StartingDate       *time.Time     `json:"starting_date"`
+	Status             *models.Status `json:"status"`
+	RequiresInspection *bool          `json:"requires_inspection"`
+	RequiresMelgueira  *bool          `json:"requires_melgueira"`
 }
 
 func (s *ColmeiaService) toModel() *models.ColmeiaModel {
 	return &models.ColmeiaModel{
-		ID:                 s.ID,
-		ColmeiaID:          s.ColmeiaID,
+		ID:                 *s.ID,
+		ColmeiaID:          *s.ColmeiaID,
 		QRCode:             s.QRCode,
 		Species:            s.Species,
-		StartingDate:       s.StartingDate,
-		Status:             s.Status,
-		RequiresInspection: s.RequiresInspection,
-		RequiresMelgueira:  s.RequiresMelgueira,
+		StartingDate:       *s.StartingDate,
+		Status:             *s.Status,
+		RequiresInspection: *s.RequiresInspection,
+		RequiresMelgueira:  *s.RequiresMelgueira,
 	}
 }
 
@@ -51,8 +51,8 @@ func GetColmeia(id int) (*models.ColmeiaModel, error) {
 	return &colmeia, nil
 }
 
-func CreateColmeia(colmeia ColmeiaService) error {
-	err := repository.CreateColmeia(*colmeia.toModel())
+func CreateColmeia(colmeiaService ColmeiaService) error {
+	err := repository.CreateColmeia(*colmeiaService.toModel())
 	return err
 }
 

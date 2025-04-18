@@ -1,14 +1,15 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Species int
 
 const (
-	TetragosniscaAngustula Species = iota
+	TetragosniscaAngustula Species = iota + 1
 	PlebeiaSp
 	MeliponaQuadrifasciata
 	MeliponaBicolor
@@ -19,7 +20,7 @@ const (
 type Status int
 
 const (
-	HoneyReady Status = iota
+	HoneyReady Status = iota + 1
 	Ready
 	Induzida
 	Developing
@@ -28,9 +29,9 @@ const (
 )
 
 type ColmeiaModel struct {
-	ID                 int       `gorm:"primaryKey;autoIncrement"`
+	ID                 int       `gorm:"primaryKey"`
 	ColmeiaID          string    `gorm:"type:varchar(100);not null"` // Additional visual ID
-	QRCode             *string   `gorm:"type:varchar(255);unique"`   // Can be NULL
+	QRCode             *string   `gorm:"type:varchar(255)"`          // Can be NULL
 	Species            Species   `gorm:"type:int;not null"`
 	StartingDate       time.Time `gorm:"not null"`
 	Status             Status    `gorm:"type:int;not null"`

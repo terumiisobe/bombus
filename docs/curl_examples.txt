@@ -7,9 +7,20 @@ curl -X GET http://localhost:8080/colmeia/
 
 curl -X GET http://localhost:8080/colmeia/1
 
-
+*with all the fields*
 curl -X POST http://localhost:8080/colmeia/ \
      -H "Content-Type: application/json" \
-     -d '{"id": 1, "colmeiaID": "1", "species": 0, "startingDate":"2025-04-02T15:04:05Z", "status": 0 }'
+     -d '{"id": 1, "colmeiaID": "1", "species": 0, "startingDate":"2025-04-18T00:00:00Z", "status": 0 }'
+
+*with the required fields*
+curl -X POST http://localhost:8080/colmeia/ \
+     -H "Content-Type: application/json" \
+     -d '{"species": 0}'
+
+*without the required fields, returns BadRequest*
+curl -X POST http://localhost:8080/colmeia/ \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "startingDate":"2025-04-18T00:00:00Z", "status": 0 }'
+
 
 curl -X DELETE http://localhost:8080/colmeia/1
