@@ -2,17 +2,17 @@ package app
 
 import (
 	"encoding/json"
-	"net/http"
 	"github.com/terumiisobe/bombus/service"
+	"net/http"
 )
 
 type Colmeia struct {
-	ID           int	`json:"id"`
-	ColmeiaID    int	`json:"colmeia_id"`	// Additional visual ID
-	QRCode       *string	`json:"qr_code"`	// Can be NULL
-	Species      string	`json:"species"`
-	StartingDate string	`json:"starting_date"`
-	Status       string	`json:"status"`
+	ID           int     `json:"id"`
+	ColmeiaID    int     `json:"colmeia_id"` // Additional visual ID
+	QRCode       *string `json:"qr_code"`    // Can be NULL
+	Species      string  `json:"species"`
+	StartingDate string  `json:"starting_date"`
+	Status       string  `json:"status"`
 }
 
 type ColmeiaHandler struct {

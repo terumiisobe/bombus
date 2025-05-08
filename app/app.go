@@ -14,10 +14,10 @@ func Start() {
 	router := mux.NewRouter()
 
 	// wiring
-	handler := ColmeiaHandler{service.NewColmeiaService(domain.NewCustomerRepositoryStub())}
+	handler := ColmeiaHandler{service.NewColmeiaService(domain.NewColmeiaRepositoryDB())}
 
 	// define routes
-	router.HandleFunc("/colmeia", handler.getAllColmeias).Methods(http.MethodGet)
+	router.HandleFunc("/colmeias", handler.getAllColmeias).Methods(http.MethodGet)
 	router.HandleFunc("/greet", greet)
 
 	// start server

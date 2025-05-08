@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "127.0.0.1:3306:3306"
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password5555
+      MYSQL_DATABASE: bombus
+      MYSQL_USER: bombus_usr
+      MYSQL_PASSWORD: bombuspass
+      TZ: Asia/Kolkata
+    volumes:
+      - ../:/docker-entrypoint-initdb.d
