@@ -36,6 +36,22 @@ func (d ColmeiaRepositoryDb) FindAll() ([]Colmeia, error) {
 	return colmeias, nil
 }
 
+func (d ColmeiaRepositoryDb) ById(id string) (*Colmeia, error) {
+
+	byIdSQL := "select * from colmeias where id = ?"
+
+	row := d.client.QueryRow(byIdSQL, id)
+
+	var c Colmeia
+	err := row.Scan(&c.ID, &c.ColmeiaID, &c.QRCode, &c.Species, &c.StartingDate, &c.Status)
+	if err != nil {
+		log.Println("Error while scanning colmeia " + err.Error())
+		return nil, err
+	}
+
+	return &c, nil
+}
+
 func NewColmeiaRepositoryDB() ColmeiaRepositoryDb {
 
 	client, err := sql.Open("mysql", "bombus_usr:bombuspass@tcp(localhost:3306)/bombus?parseTime=true")

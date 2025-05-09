@@ -13,4 +13,5 @@ type Colmeia struct {
 
 type ColmeiaRepository interface {
 	FindAll() ([]Colmeia, error)
+	ById(string) (*Colmeia, error)
 }
