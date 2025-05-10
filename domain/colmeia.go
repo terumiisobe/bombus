@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/terumiisobe/bombus/errs"
+)
 
 type Colmeia struct {
 	ID           int
@@ -12,6 +16,6 @@ type Colmeia struct {
 }
 
 type ColmeiaRepository interface {
-	FindAll() ([]Colmeia, error)
-	ById(string) (*Colmeia, error)
+	FindAll(string, string) ([]Colmeia, error)
+	ById(string) (*Colmeia, *errs.AppError)
 }

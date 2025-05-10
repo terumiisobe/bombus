@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -23,32 +22,30 @@ type ColmeiaHandler struct {
 }
 
 func (ch *ColmeiaHandler) getAllColmeias(w http.ResponseWriter, r *http.Request) {
-	//mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
-	//colmeias := []Colmeia{
-	//	{123, 123, nil, 1, mockTime, 1},
-	//	{456, 456, nil, 2, mockTime, 2},
-	//}
-	colmeias, _ := ch.s.GetAllColmeia()
+	status := r.URL.Query().Get("status")
+	species := r.URL.Query().Get("species")
+
+	colmeias, _ := ch.s.GetAllColmeia(status, species)
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(colmeias)
 }
 
 func (ch *ColmeiaHandler) getColmeia(w http.ResponseWriter, r *http.Request) {
-	//mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
-	//colmeias := []Colmeia{
-	//	{123, 123, nil, 1, mockTime, 1},
-	//	{456, 456, nil, 2, mockTime, 2},
-	//}
 	vars := mux.Vars(r)
 	id := vars["id"]
 
 	colmeias, err := ch.s.GetColmeia(id)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, err.Error())
+		writeResponse(w, err.Code, err.AsMessage())
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(colmeias)
+		writeResponse(w, http.StatusOK, colmeias)
+	}
+}
 
+func writeResponse(w http.ResponseWriter, code int, data any) {
+	w.WriteHeader(code)
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		panic(err)
 	}
 }
