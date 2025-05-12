@@ -16,6 +16,7 @@ type Colmeia struct {
 }
 
 type ColmeiaRepository interface {
-	FindAll(string, string) ([]Colmeia, error)
+	FindAll(string, string) ([]Colmeia, *errs.AppError)
 	ById(string) (*Colmeia, *errs.AppError)
+	Create(Colmeia) *errs.AppError
 }

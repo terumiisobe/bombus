@@ -19,6 +19,8 @@ func Start() {
 	// define routes
 	router.HandleFunc("/colmeias", handler.getAllColmeias).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias/{id:[0-9]+}", handler.getColmeia).Methods(http.MethodGet)
+	router.HandleFunc("/colmeias", handler.createColmeia).Methods(http.MethodPut)
+
 	router.HandleFunc("/greet", greet)
 
 	// start server

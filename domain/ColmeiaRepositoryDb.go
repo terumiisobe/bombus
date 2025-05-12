@@ -14,7 +14,7 @@ type ColmeiaRepositoryDb struct {
 	client *sql.DB
 }
 
-func (d ColmeiaRepositoryDb) FindAll(status string, species string) ([]Colmeia, error) {
+func (d ColmeiaRepositoryDb) FindAll(status string, species string) ([]Colmeia, *errs.AppError) {
 
 	var rows *sql.Rows
 	var err error
@@ -31,7 +31,7 @@ func (d ColmeiaRepositoryDb) FindAll(status string, species string) ([]Colmeia, 
 	}
 	if err != nil {
 		log.Println("Error while getting colmeias table: " + err.Error())
-		return nil, err
+		return nil, errs.NewUnexpectedError(err.Error())
 	}
 
 	colmeias := make([]Colmeia, 0)
@@ -40,7 +40,7 @@ func (d ColmeiaRepositoryDb) FindAll(status string, species string) ([]Colmeia, 
 		err := rows.Scan(&c.ID, &c.ColmeiaID, &c.QRCode, &c.Species, &c.StartingDate, &c.Status)
 		if err != nil {
 			log.Println("Error while scanning colmeias " + err.Error())
-			return nil, err
+			return nil, errs.NewUnexpectedError(err.Error())
 		}
 		colmeias = append(colmeias, c)
 	}
@@ -66,6 +66,18 @@ func (d ColmeiaRepositoryDb) ById(id string) (*Colmeia, *errs.AppError) {
 	}
 
 	return &c, nil
+}
+
+func (d ColmeiaRepositoryDb) Create(colmeia Colmeia) *errs.AppError {
+
+	createSQL := "INSERT INTO colmeias (id, colmeia_id, qr_code, species_id, starting_date, status_id) VALUES (?, ?, ?, ?, ?, ?)"
+
+	_, err := d.client.Exec(createSQL, colmeia.ID, colmeia.ColmeiaID, colmeia.QRCode, colmeia.Species, colmeia.StartingDate, colmeia.Status)
+	if err != nil {
+		log.Println("Error while creating colmeia: " + err.Error())
+		return errs.NewUnexpectedError(err.Error())
+	}
+	return nil
 }
 
 func NewColmeiaRepositoryDB() ColmeiaRepositoryDb {

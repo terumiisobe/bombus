@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/terumiisobe/bombus/domain"
 	"github.com/terumiisobe/bombus/service"
 )
 
@@ -25,9 +26,12 @@ func (ch *ColmeiaHandler) getAllColmeias(w http.ResponseWriter, r *http.Request)
 	status := r.URL.Query().Get("status")
 	species := r.URL.Query().Get("species")
 
-	colmeias, _ := ch.s.GetAllColmeia(status, species)
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(colmeias)
+	colmeias, err := ch.s.GetAllColmeia(status, species)
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
+	} else {
+		writeResponse(w, http.StatusOK, colmeias)
+	}
 }
 
 func (ch *ColmeiaHandler) getColmeia(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +43,20 @@ func (ch *ColmeiaHandler) getColmeia(w http.ResponseWriter, r *http.Request) {
 		writeResponse(w, err.Code, err.AsMessage())
 	} else {
 		writeResponse(w, http.StatusOK, colmeias)
+	}
+}
+
+func (ch *ColmeiaHandler) createColmeia(w http.ResponseWriter, r *http.Request) {
+	var colmeia domain.Colmeia
+	if err := json.NewDecoder(r.Body).Decode(&colmeia); err != nil {
+		writeResponse(w, http.StatusBadRequest, err.Error())
+	}
+
+	err := ch.s.CreateColmeia(colmeia)
+	if err != nil {
+		writeResponse(w, http.StatusInternalServerError, err.AsMessage())
+	} else {
+		writeResponse(w, http.StatusCreated, nil)
 	}
 }
 
