@@ -24,7 +24,7 @@ func (s DefaultColmeiaService) GetColmeia(id string) (*domain.Colmeia, *errs.App
 }
 
 func (s DefaultColmeiaService) CreateColmeia(colmeia domain.Colmeia) *errs.AppError {
-	return s.CreateColmeia(colmeia)
+	return s.repo.Create(colmeia)
 }
 
 func NewColmeiaService(repository domain.ColmeiaRepository) DefaultColmeiaService {
