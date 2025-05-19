@@ -1,6 +1,6 @@
 package main
 
-import "github.com/terumiisobe/bombus/app"
+import "bombus/app"
 
 func main() {
 	app.Start()

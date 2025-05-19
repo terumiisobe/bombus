@@ -1,4 +1,4 @@
-package app
+package chatbot
 
 import (
 	"bytes"
@@ -9,15 +9,19 @@ import (
 	"sync"
 )
 
-var (
-	userMenuStates = make(map[string]string)
-	stateLock      sync.Mutex
-)
-
-type WhatsappHandler struct {
+type ChatbotWebhook struct {
+    state ChatbotState
 }
 
-func (wh *WhatsappHandler) webhookHandler(w http.ResponseWriter, r *http.Request) {
+func NewChatbotWebhook() *ChatbotWebhook {
+
+    return &ChatbotWebhook{
+        state : ChatbotState{
+        }
+    }
+
+
+func (wh *ChatbotHandler) webhookHandler(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 	from := r.FormValue("From")
 	body := r.FormValue("Body")
@@ -70,18 +74,4 @@ func sendReply(to, message string) error {
 
 	log.Printf("Sent to %s: %s\n", to, message)
 	return nil
-}
-
-func setState(user, currentState string) {
-	log.Printf("Setting state from: %s to: %s", userMenuStates[user], currentState)
-	stateLock.Lock()
-	defer stateLock.Unlock()
-	userMenuStates[user] = currentState
-}
-
-func clearState(user string) {
-	log.Printf("Cleanin up state from: %s", userMenuStates[user])
-	stateLock.Lock()
-	defer stateLock.Unlock()
-	delete(userMenuStates, user)
 }

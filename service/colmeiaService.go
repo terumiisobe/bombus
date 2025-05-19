@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/terumiisobe/bombus/domain"
-	"github.com/terumiisobe/bombus/errs"
+	"bombus/domain"
+	"bombus/errs"
 )
 
 type ColmeiaService interface {
@@ -15,6 +15,10 @@ type DefaultColmeiaService struct {
 	repo domain.ColmeiaRepository
 }
 
+func NewColmeiaService(repository domain.ColmeiaRepository) DefaultColmeiaService {
+	return DefaultColmeiaService{repository}
+}
+
 func (s DefaultColmeiaService) GetAllColmeia(status string, species string) ([]domain.Colmeia, *errs.AppError) {
 	return s.repo.FindAll(status, species)
 }
@@ -25,8 +29,4 @@ func (s DefaultColmeiaService) GetColmeia(id string) (*domain.Colmeia, *errs.App
 
 func (s DefaultColmeiaService) CreateColmeia(colmeia domain.Colmeia) *errs.AppError {
 	return s.repo.Create(colmeia)
-}
-
-func NewColmeiaService(repository domain.ColmeiaRepository) DefaultColmeiaService {
-	return DefaultColmeiaService{repository}
 }

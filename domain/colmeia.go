@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/terumiisobe/bombus/errs"
+	"bombus/errs"
 )
 
 type Colmeia struct {

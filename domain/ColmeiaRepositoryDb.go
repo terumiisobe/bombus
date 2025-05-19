@@ -7,11 +7,32 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/terumiisobe/bombus/errs"
+	"bombus/errs"
 )
 
 type ColmeiaRepositoryDb struct {
 	client *sql.DB
+}
+
+func NewColmeiaRepositoryDB() ColmeiaRepositoryDb {
+
+	client, err := sql.Open("mysql", "bombus_usr:bombuspass@tcp(localhost:3306)/bombus?parseTime=true")
+	if err != nil {
+		panic(err)
+	}
+
+	client.SetConnMaxLifetime(time.Minute * 3)
+	client.SetMaxOpenConns(10)
+	client.SetMaxIdleConns(10)
+
+	err = client.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("connected to mysql")
+
+	return ColmeiaRepositoryDb{client}
 }
 
 func (d ColmeiaRepositoryDb) FindAll(status string, species string) ([]Colmeia, *errs.AppError) {
@@ -80,23 +101,3 @@ func (d ColmeiaRepositoryDb) Create(colmeia Colmeia) *errs.AppError {
 	return nil
 }
 
-func NewColmeiaRepositoryDB() ColmeiaRepositoryDb {
-
-	client, err := sql.Open("mysql", "bombus_usr:bombuspass@tcp(localhost:3306)/bombus?parseTime=true")
-	if err != nil {
-		panic(err)
-	}
-
-	client.SetConnMaxLifetime(time.Minute * 3)
-	client.SetMaxOpenConns(10)
-	client.SetMaxIdleConns(10)
-
-	err = client.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("connected to mysql")
-
-	return ColmeiaRepositoryDb{client}
-}

@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/terumiisobe/bombus/config"
-	"github.com/terumiisobe/bombus/domain"
-	"github.com/terumiisobe/bombus/service"
+	"bombus/config"
+	"bombus/domain"
+	"bombus/service"
 )
 
 var AppConfig *config.Config
@@ -26,14 +26,14 @@ func Start() {
 
 	// wiring
 	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(domain.NewColmeiaRepositoryDB())}
-	WhatsappHandler := WhatsappHandler{}
+	chatbotHandler := NewChatbotHandler()
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias/{id:[0-9]+}", colmeiaHandler.getColmeia).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias", colmeiaHandler.createColmeia).Methods(http.MethodPost)
 
-	router.HandleFunc("/webhook", WhatsappHandler.webhookHandler).Methods(http.MethodPost)
+	router.HandleFunc("/webhook", chatbotHandler.webhookHandler).Methods(http.MethodPost)
 
 	router.HandleFunc("/greet", greet)
 
