@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/terumiisobe/bombus/domain"
-	"github.com/terumiisobe/bombus/service"
+	"bombus/domain"
+	"bombus/service"
 )
 
 type Colmeia struct {
