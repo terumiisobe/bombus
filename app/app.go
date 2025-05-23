@@ -26,8 +26,9 @@ func Start() {
 	router := mux.NewRouter()
 
 	// wiring
+	// TODO: replace to actual and not stubs
 	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(domain.NewColmeiaRepositoryStub())}
-	chatbotHandler := ChatbotHandler{service.NewChatbotService()}
+	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub())}
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)
