@@ -10,3 +10,12 @@ const (
 	ScaptotrigonaBipunctata
 	ScaptotrigonaDepilis
 )
+
+const SpeciesCount = 6
+
+func IsSpeciesEnum(v int) bool {
+	if v <= 0 && v > SpeciesCount {
+		return false
+	}
+	return true
+}
