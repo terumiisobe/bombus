@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type InteractionRepositoryStub struct {
 	interactions []Interaction
 }
@@ -11,7 +13,7 @@ func NewInteractionRepositoryStub() InteractionRepositoryStub {
 		{AddColmeiaForm, "Add Colmeia Form"},
 		{AddBatchColmeiaForm, "Add Batch Colmeia Form"},
 		{Success, "Success message"},
-		{Fail, "Fail message"},
+		{Fail, "Fail message, error is: %s"},
 	}
 
 	return InteractionRepositoryStub{interactions}
@@ -19,6 +21,18 @@ func NewInteractionRepositoryStub() InteractionRepositoryStub {
 
 func (s InteractionRepositoryStub) GetTextByType(t InteractionType) string {
 	for _, interaction := range s.interactions {
+		if interaction.typeName == t {
+			return interaction.text
+		}
+	}
+	return ""
+}
+
+func (s InteractionRepositoryStub) GenerateText(t InteractionType, additionalInfo string) string {
+	for _, interaction := range s.interactions {
+		if interaction.typeName == Fail {
+			return fmt.Sprintf(interaction.text, additionalInfo)
+		}
 		if interaction.typeName == t {
 			return interaction.text
 		}

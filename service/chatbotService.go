@@ -40,7 +40,11 @@ func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]dom
 func (cs ChatbotServiceImpl) GenerateOutputMessageTDD(user, input string) string {
 	currentUserInteractionState := cs.userInteractionStateMap[user]
 	if currentUserInteractionState == domain.AddColmeiaForm {
-		ValidateText(currentUserInteractionState, input)
+		err := ValidateText(currentUserInteractionState, input)
+		if err != nil {
+			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+		}
+		return cs.interactionRepo.GetTextByType(domain.Success)
 	}
 	if currentUserInteractionState == domain.ListColmeias {
 		return cs.interactionRepo.GetTextByType(domain.MainMenu)

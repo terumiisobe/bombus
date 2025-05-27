@@ -60,7 +60,7 @@ func TestChatbotService_GenerateMessage(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("User MainMenu state, types 2, return add", func(t *testing.T) {
+	t.Run("User MainMenu state, types 2, return add form", func(t *testing.T) {
 		m := map[string]domain.InteractionType{
 			usr: domain.MainMenu,
 		}
@@ -73,7 +73,7 @@ func TestChatbotService_GenerateMessage(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("User MainMenu state, types 3, return add batch", func(t *testing.T) {
+	t.Run("User MainMenu state, types 3, return add batch form", func(t *testing.T) {
 		m := map[string]domain.InteractionType{
 			usr: domain.MainMenu,
 		}
@@ -92,7 +92,7 @@ func TestChatbotService_GenerateMessage(t *testing.T) {
 		}
 		s := service.NewChatbotServiceCustomMap(r, m)
 
-		got := s.GenerateOutputMessageTDD(usr, "something")
+		got := s.GenerateOutputMessageTDD(usr, "anything")
 		want := r.GetTextByType(domain.MainMenu)
 
 		if got != want {
@@ -117,9 +117,22 @@ func TestChatbotService_GenerateMessage(t *testing.T) {
 			usr: domain.AddColmeiaForm,
 		}
 		s := service.NewChatbotServiceCustomMap(r, m)
-		validText := "123 \n1 \n01/05/2020 \npet"
+		validText := "123 \n1 \n01/05/2020 \n1"
 		got := s.GenerateOutputMessageTDD(usr, validText)
 		want := r.GetTextByType(domain.Success)
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("User AddColmeiaForm state, types invalid input, return fail with error message", func(t *testing.T) {
+		m := map[string]domain.InteractionType{
+			usr: domain.AddColmeiaForm,
+		}
+		s := service.NewChatbotServiceCustomMap(r, m)
+		invalidText := "\n1000 \n01/05/2020 \n1"
+		got := s.GenerateOutputMessageTDD(usr, invalidText)
+		want := r.GenerateText(domain.Fail, "Dados inválidos (1000).")
 
 		if got != want {
 			t.Errorf("got %q want %q", got, want)

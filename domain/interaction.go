@@ -7,6 +7,7 @@ type Interaction struct {
 
 type InteractionRepository interface {
 	GetTextByType(InteractionType) string
+	GenerateText(InteractionType, string) string
 }
 
 type InteractionType int
