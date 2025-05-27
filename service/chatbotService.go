@@ -5,8 +5,10 @@ import (
 	"bombus/errs"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 type ChatbotService interface {
@@ -59,29 +61,72 @@ func ValidateText(interactionType domain.InteractionType, text string) *errs.App
 	if text == "" {
 		return errs.NewValidationError("Texto vazio.")
 	}
-	formValues := convertRawTextIntoSlice(text)
-	if len(formValues) != 3 && len(formValues) != 4 {
+
+	formValues := convertToFormValues(text)
+	formSizes := []int{3, 4}
+	if !contains(formSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
-	if len(formValues) == 3 {
-		return errs.NewValidationError(fmt.Sprintf("Dados inválidos (%s, %s, %s).", formValues[0], formValues[1], formValues[2]))
+
+	invalidValues := []string{}
+	var err error
+
+	for idx, val := range formValues {
+		switch idx {
+		case 0:
+			err = domain.ValidateStatus(val)
+		case 1:
+			_, err = time.Parse("02/01/2006", val)
+		case 2:
+			err = domain.ValidateSpecies(val)
+		case 3:
+			_, err = strconv.Atoi(val)
+		}
+
+		if err != nil {
+			invalidValues = append(invalidValues, val)
+		}
 	}
-	if len(formValues) == 4 {
-		return errs.NewValidationError(fmt.Sprintf("Dados inválidos (%s, %s, %s, %s).", formValues[0], formValues[1], formValues[2], formValues[3]))
+
+	if len(invalidValues) > 0 {
+		return errs.NewValidationError(fmt.Sprintf("Dados inválidos (%s).", strings.Join(reverse(invalidValues), ", ")))
 	}
+
 	return nil
 }
 
-func convertRawTextIntoSlice(rawText string) []string {
-	lines := strings.Split(rawText, "\n")
-	var result []string
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
+func convertToFormValues(rawText string) []string {
+	formSeparator := "\n"
+	return reverse(convertStringToSlice(rawText, formSeparator))
+}
+
+func convertStringToSlice(s string, separator string) []string {
+	splittedStrings := strings.Split(s, separator)
+	var slice []string
+	for _, split := range splittedStrings {
+		trimmed := strings.TrimSpace(split)
 		if trimmed != "" {
-			result = append(result, trimmed)
+			slice = append(slice, trimmed)
 		}
 	}
-	return result
+	return slice
+}
+
+func reverse(s []string) []string {
+	rev := make([]string, len(s))
+	for i, v := range s {
+		rev[len(s)-1-i] = v
+	}
+	return rev
+}
+
+func contains(slice []int, value int) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
 }
 
 func (cs ChatbotServiceImpl) GenerateMessage(from, body string) string {

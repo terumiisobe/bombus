@@ -1,5 +1,10 @@
 package domain
 
+import (
+	"errors"
+	"strconv"
+)
+
 type Species int
 
 const (
@@ -13,9 +18,10 @@ const (
 
 const SpeciesCount = 6
 
-func IsSpeciesEnum(v int) bool {
-	if v <= 0 && v > SpeciesCount {
-		return false
+func ValidateSpecies(s string) error {
+	v, err := strconv.Atoi(s)
+	if err != nil || v <= 0 || v > SpeciesCount {
+		return errors.New("not a species enum")
 	}
-	return true
+	return nil
 }

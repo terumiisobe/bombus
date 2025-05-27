@@ -1,5 +1,10 @@
 package domain
 
+import (
+	"errors"
+	"strconv"
+)
+
 type Status int
 
 const (
@@ -12,9 +17,10 @@ const (
 
 const StatusCount = 5
 
-func IsStatusEnum(v int) bool {
-	if v <= 0 && v > StatusCount {
-		return false
+func ValidateStatus(s string) error {
+	v, err := strconv.Atoi(s)
+	if err != nil || v <= 0 || v > StatusCount {
+		return errors.New("not a status enum")
 	}
-	return true
+	return nil
 }
