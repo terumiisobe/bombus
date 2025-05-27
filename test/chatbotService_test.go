@@ -138,6 +138,19 @@ func TestChatbotService_GenerateMessage(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
+	t.Run("User AddBatchColmeiaForm state, types valid input (5 values), return success", func(t *testing.T) {
+		m := map[string]domain.InteractionType{
+			usr: domain.AddBatchColmeiaForm,
+		}
+		s := service.NewChatbotServiceCustomMap(r, m)
+		validText := "10\n123 \n1 \n01/05/2020 \n1"
+		got := s.GenerateOutputMessageTDD(usr, validText)
+		want := r.GetTextByType(domain.Success)
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
 }
 
 func TestChatbotService_ValidateText(t *testing.T) {
@@ -149,7 +162,8 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data quantity (less)", func(t *testing.T) {
+	// InteractionType = AddColmeiaForm
+	t.Run("[AddColmeiaForm] Wrong data quantity (less)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "something")
 		want := errs.NewValidationError("Número incorreto de linhas.")
 
@@ -157,7 +171,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data quantity (more)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data quantity (more)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "something\nsomething\nsomething\nsomething\nsomething")
 		want := errs.NewValidationError("Número incorreto de linhas.")
 
@@ -165,7 +179,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (all wrong in type), right data amount (only mandatory fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (all wrong in type), right data amount (only mandatory fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "something\nsomething\nsomething")
 		want := errs.NewValidationError("Dados inválidos (something, something, something).")
 
@@ -173,7 +187,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (1 wrong in type, 2 right), right data amount (only mandatory fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (1 wrong in type, 2 right), right data amount (only mandatory fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "something\n01/02/2020\n1")
 		want := errs.NewValidationError("Dados inválidos (something).")
 
@@ -181,7 +195,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (2 wrong in type, 1 right), right data amount (only mandatory fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (2 wrong in type, 1 right), right data amount (only mandatory fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "1\nsomething\nsome other thing")
 		want := errs.NewValidationError("Dados inválidos (something, some other thing).")
 
@@ -189,7 +203,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Valid data, right data amount (only mandatory fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Valid data, right data amount (only mandatory fields)", func(t *testing.T) {
 		validText := "1\n" + "01/02/2020\n" + "1\n"
 
 		got := service.ValidateText(domain.AddColmeiaForm, validText)
@@ -198,7 +212,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want nil", got)
 		}
 	})
-	t.Run("Wrong data (all wrong in type), right data amount (all fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (all wrong in type), right data amount (all fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "something A\nsomething B\nsomething C\nsomething D")
 		want := errs.NewValidationError("Dados inválidos (something A, something B, something C, something D).")
 
@@ -206,7 +220,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (1 wrong in type, 3 right), right data amount (all fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (1 wrong in type, 3 right), right data amount (all fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "123\n1\n01/02/2020\nsomething")
 		want := errs.NewValidationError("Dados inválidos (something).")
 
@@ -214,7 +228,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (2 wrong in type, 2 right), right data amount (all fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (2 wrong in type, 2 right), right data amount (all fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "123\nsomething A\n01/02/2020\nsomething B")
 		want := errs.NewValidationError("Dados inválidos (something A, something B).")
 
@@ -222,7 +236,7 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Wrong data (2 wrong in enum, 2 right), right data amount (all fields)", func(t *testing.T) {
+	t.Run("[AddColmeiaForm] Wrong data (2 wrong in enum, 2 right), right data amount (all fields)", func(t *testing.T) {
 		got := service.ValidateText(domain.AddColmeiaForm, "123\n100\n01/02/2020\n50")
 		want := errs.NewValidationError("Dados inválidos (100, 50).")
 
@@ -230,8 +244,8 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-	t.Run("Valid data, right data amount (only mandatory fields)", func(t *testing.T) {
-		validText := "1\n" + "01/02/2020\n" + "1\n"
+	t.Run("[AddColmeiaForm] Valid data, right data amount (all fields)", func(t *testing.T) {
+		validText := "123\n" + "2\n" + "01/02/2020\n" + "1\n"
 
 		got := service.ValidateText(domain.AddColmeiaForm, validText)
 
@@ -239,10 +253,69 @@ func TestChatbotService_ValidateText(t *testing.T) {
 			t.Errorf("got %q want nil", got)
 		}
 	})
-	t.Run("Valid data, right data amount (all fields)", func(t *testing.T) {
-		validText := "123\n" + "2\n" + "01/02/2020\n" + "1\n"
 
-		got := service.ValidateText(domain.AddColmeiaForm, validText)
+	// InteractionType = AddBatchColmeiaForm
+	t.Run("[AddBatchColmeiaForm] Wrong data quantity (less)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something\nsomething\nsomething")
+		want := errs.NewValidationError("Número incorreto de linhas.")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Wrong data quantity (more)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something\nsomething\nsomething\nsomething\nsomething\nsomething")
+		want := errs.NewValidationError("Número incorreto de linhas.")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Wrong data (all wrong in type), right data amount (only mandatory fields)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something\nsomething\nsomething\nsomething")
+		want := errs.NewValidationError("Dados inválidos (something, something, something, something).")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Wrong data (1 wrong in type, 3 right), right data amount (only mandatory fields)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something\n1\n01/02/2020\n1")
+		want := errs.NewValidationError("Dados inválidos (something).")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Valid data, right data amount (only mandatory fields)", func(t *testing.T) {
+		validText := "10\n" + "1\n" + "01/02/2020\n" + "1\n"
+
+		got := service.ValidateText(domain.AddBatchColmeiaForm, validText)
+
+		if got != nil {
+			t.Errorf("got %q want nil", got)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Wrong data (all wrong in type), right data amount (all fields)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something A\nsomething B\nsomething C\nsomething D\nsomething E")
+		want := errs.NewValidationError("Dados inválidos (something A, something B, something C, something D, something E).")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Wrong data (1 wrong in type, 4 right), right data amount (all fields)", func(t *testing.T) {
+		got := service.ValidateText(domain.AddBatchColmeiaForm, "something\n12345\n1\n01/02/2020\n1")
+		want := errs.NewValidationError("Dados inválidos (something).")
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+	t.Run("[AddBatchColmeiaForm] Valid data, right data amount (all fields)", func(t *testing.T) {
+		validText := "3\n" + "123\n" + "2\n" + "01/02/2020\n" + "1\n"
+
+		got := service.ValidateText(domain.AddBatchColmeiaForm, validText)
 
 		if got != nil {
 			t.Errorf("got %q want nil", got)

@@ -46,6 +46,13 @@ func (cs ChatbotServiceImpl) GenerateOutputMessageTDD(user, input string) string
 		}
 		return cs.interactionRepo.GetTextByType(domain.Success)
 	}
+	if currentUserInteractionState == domain.AddBatchColmeiaForm {
+		err := ValidateText(currentUserInteractionState, input)
+		if err != nil {
+			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+		}
+		return cs.interactionRepo.GetTextByType(domain.Success)
+	}
 	if currentUserInteractionState == domain.ListColmeias {
 		return cs.interactionRepo.GetTextByType(domain.MainMenu)
 	}
@@ -67,7 +74,13 @@ func ValidateText(interactionType domain.InteractionType, text string) *errs.App
 	}
 
 	formValues := convertToFormValues(text)
-	formSizes := []int{3, 4}
+	var formSizes []int
+	if interactionType == domain.AddColmeiaForm {
+		formSizes = []int{3, 4}
+	}
+	if interactionType == domain.AddBatchColmeiaForm {
+		formSizes = []int{4, 5}
+	}
 	if !contains(formSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
@@ -76,14 +89,15 @@ func ValidateText(interactionType domain.InteractionType, text string) *errs.App
 	var err error
 
 	for idx, val := range formValues {
-		switch idx {
-		case 0:
+		err = nil
+		switch {
+		case idx == 0:
 			err = domain.ValidateStatus(val)
-		case 1:
+		case idx == 1:
 			_, err = time.Parse("02/01/2006", val)
-		case 2:
+		case idx == 2:
 			err = domain.ValidateSpecies(val)
-		case 3:
+		case idx == 3 || idx == 4:
 			_, err = strconv.Atoi(val)
 		}
 
