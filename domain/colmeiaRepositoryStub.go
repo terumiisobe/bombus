@@ -15,6 +15,7 @@ func NewColmeiaRepositoryStub() ColmeiaRepositoryStub {
 	colmeias := []Colmeia{
 		{123, intPtr(123), nil, 1, mockTime, 1},
 		{456, intPtr(456), nil, 2, mockTime, 2},
+		{789, intPtr(789), nil, 2, mockTime, 3},
 	}
 
 	return ColmeiaRepositoryStub{colmeias}
@@ -41,4 +42,16 @@ func (s ColmeiaRepositoryStub) ById(id string) (*Colmeia, *errs.AppError) {
 func (s ColmeiaRepositoryStub) Create(colmeia Colmeia) *errs.AppError {
 	s.colmeias = append(s.colmeias, colmeia)
 	return nil
+}
+
+func (s ColmeiaRepositoryStub) CountGroupedBySpecies() map[int]int {
+	count := make(map[int]int)
+	for _, colmeia := range s.colmeias {
+		key := int(colmeia.Species)
+		if _, keyExists := count[key]; keyExists {
+			count[key]++
+		}
+		count[key] = 1
+	}
+	return count
 }
