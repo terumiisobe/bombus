@@ -8,6 +8,7 @@ type InteractionRepositoryStub struct {
 
 func NewInteractionRepositoryStub() InteractionRepositoryStub {
 	interactions := []Interaction{
+		{Init, ""},
 		{MainMenu, "Menu with the options: 1, 2, 3"},
 		{ListColmeias, "Colmeias list"},
 		{AddColmeiaForm, "Add Colmeia Form"},

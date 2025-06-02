@@ -13,22 +13,11 @@ type InteractionRepository interface {
 type InteractionType int
 
 const (
-	MainMenu InteractionType = iota + 1
+	Init InteractionType = iota
+	MainMenu
 	ListColmeias
 	AddColmeiaForm
 	AddBatchColmeiaForm
 	Success
 	Fail
 )
-
-var InteractionDependencyMap = map[InteractionType]map[string]InteractionType{
-	MainMenu: {
-		"1": ListColmeias,
-		"2": AddColmeiaForm,
-		"3": AddBatchColmeiaForm},
-	ListColmeias:        {},
-	AddColmeiaForm:      {},
-	AddBatchColmeiaForm: {},
-	Success:             {},
-	Fail:                {},
-}
