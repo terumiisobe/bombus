@@ -12,6 +12,9 @@ func (a *AppError) AsMessage() *AppError {
 		Message: a.Message,
 	}
 }
+func IsEqual(oneErr *AppError, anotherErr *AppError) bool {
+	return (oneErr == nil && anotherErr == nil) || oneErr.Code == anotherErr.Code && oneErr.Message == anotherErr.Message
+}
 
 func NewNotFoundError(message string) *AppError {
 	return &AppError{

@@ -11,111 +11,209 @@ import (
 	"time"
 )
 
-type ChatbotService interface {
-	GenerateMessage(string, string) string
-}
+type ChatbotService interface{}
 
 type ChatbotServiceImpl struct {
 	userInteractionStateMap map[string]domain.InteractionType
 	stateLock               *sync.Mutex
 	interactionRepo         domain.InteractionRepository
+
+	colmeiaService ColmeiaService
 }
 
-func NewChatbotService(interactionRepo domain.InteractionRepository) ChatbotServiceImpl {
+func NewChatbotService(interactionRepo domain.InteractionRepository, cs ColmeiaService) ChatbotServiceImpl {
 	return ChatbotServiceImpl{
 		userInteractionStateMap: make(map[string]domain.InteractionType),
 		stateLock:               new(sync.Mutex),
 		interactionRepo:         interactionRepo,
+		colmeiaService:          cs,
 	}
 }
 
-func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]domain.InteractionType) ChatbotServiceImpl {
+func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImpl {
 	return ChatbotServiceImpl{
 		userInteractionStateMap: m,
 		stateLock:               new(sync.Mutex),
 		interactionRepo:         r,
+		colmeiaService:          cs,
 	}
 }
 
-func (cs ChatbotServiceImpl) GenerateOutputMessageTDD(user, input string) string {
-	currentUserInteractionState := cs.userInteractionStateMap[user]
-	if currentUserInteractionState == domain.AddColmeiaForm {
-		err := ValidateText(currentUserInteractionState, input)
-		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
-		}
-		return cs.interactionRepo.GetTextByType(domain.Success)
+func (cs ChatbotServiceImpl) processInteractionAndGenerateResponse(user, input string) string {
+	userCurrentInteractionState := cs.userInteractionStateMap[user]
+
+	userNextInteractionState, err := GetNextInteraction(userCurrentInteractionState, input)
+	if err != nil {
+		// validation error
 	}
-	if currentUserInteractionState == domain.AddBatchColmeiaForm {
-		err := ValidateText(currentUserInteractionState, input)
-		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
-		}
-		return cs.interactionRepo.GetTextByType(domain.Success)
-	}
-	if currentUserInteractionState == domain.ListColmeias {
-		return cs.interactionRepo.GetTextByType(domain.MainMenu)
-	}
-	if input == "1" {
-		return cs.interactionRepo.GetTextByType(domain.ListColmeias)
-	}
-	if input == "2" {
-		return cs.interactionRepo.GetTextByType(domain.AddColmeiaForm)
-	}
-	if input == "3" {
-		return cs.interactionRepo.GetTextByType(domain.AddBatchColmeiaForm)
-	}
-	return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	result := cs.executeAction(userNextInteractionState, input)
+	response := GenerateMessage(userNextInteractionState, result)
+
+	cs.updateUserInteractionState(user, userNextInteractionState)
+	return response
 }
 
-func ValidateText(interactionType domain.InteractionType, text string) *errs.AppError {
-	if text == "" {
-		return errs.NewValidationError("Texto vazio.")
+func GetNextInteraction(state domain.InteractionType, input string) (domain.InteractionType, *errs.AppError) {
+	err := ValidateInput(state, input)
+
+	if state == domain.MainMenu && input == "1" {
+		return domain.ListColmeias, nil
+	}
+	if state == domain.MainMenu && input == "2" {
+		return domain.AddColmeiaForm, nil
+	}
+	if state == domain.MainMenu && input == "3" {
+		return domain.AddBatchColmeiaForm, nil
+	}
+	if state == domain.ListColmeias {
+		return domain.Init, nil
+	}
+	if state == domain.AddColmeiaForm || state == domain.AddBatchColmeiaForm {
+		if err != nil {
+			return domain.Fail, err
+		}
+		return domain.Success, nil
 	}
 
-	formValues := convertToFormValues(text)
-	var formSizes []int
-	if interactionType == domain.AddColmeiaForm {
-		formSizes = []int{3, 4}
+	return domain.MainMenu, err
+}
+
+// impure function
+func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input string) string {
+	// if state == domain.ListColmeias {
+	// 	cs.colmeiaService.GetAllColmeia()
+	// }
+}
+
+func GenerateMessage(state domain.InteractionType, input string) string {
+	// state := cs.userInteractionStateMap[user]
+	// if state == domain.AddColmeiaForm {
+	// 	err := ValidateInput(state, input)
+	// 	if err != nil {
+	// 		return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+	// 	}
+	// 	return cs.interactionRepo.GetTextByType(domain.Success)
+	// }
+	// if state == domain.AddBatchColmeiaForm {
+	// 	err := ValidateInput(state, input)
+	// 	if err != nil {
+	// 		return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+	// 	}
+	// 	return cs.interactionRepo.GetTextByType(domain.Success)
+	// }
+	// if state == domain.ListColmeias {
+	// 	return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	// }
+	// if input == "1" {
+	// 	return cs.interactionRepo.GetTextByType(domain.ListColmeias)
+	// }
+	// if input == "2" {
+	// 	return cs.interactionRepo.GetTextByType(domain.AddColmeiaForm)
+	// }
+	// if input == "3" {
+	// 	return cs.interactionRepo.GetTextByType(domain.AddBatchColmeiaForm)
+	// }
+	// return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	return ""
+}
+
+func ValidateInput(state domain.InteractionType, input string) *errs.AppError {
+	valid := []string{"1", "2", "3"}
+	if state == domain.MainMenu && !containsString(valid, input) {
+		return errs.NewValidationError("Opção inválida.")
 	}
-	if interactionType == domain.AddBatchColmeiaForm {
-		formSizes = []int{4, 5}
+	if state == domain.AddColmeiaForm || state == domain.AddBatchColmeiaForm {
+		formValues := convertToFormValues(input)
+		return ValidateForm(state, formValues)
 	}
-	if !contains(formSizes, len(formValues)) {
+	return nil
+}
+
+func ValidateForm(formType domain.InteractionType, formValues []string) *errs.AppError {
+	addColmeiaFormSizes := []int{3, 4}
+	addBatchColmeiaFormSizes := []int{4, 5}
+	if formType == domain.AddColmeiaForm && !containsInt(addColmeiaFormSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
-	invalidValues := []string{}
-	var err error
-
-	for idx, val := range formValues {
-		err = nil
-		switch {
-		case idx == 0:
-			err = domain.ValidateStatus(val)
-		case idx == 1:
-			_, err = time.Parse("02/01/2006", val)
-		case idx == 2:
-			err = domain.ValidateSpecies(val)
-		case idx == 3 || idx == 4:
-			_, err = strconv.Atoi(val)
-		}
-
-		if err != nil {
-			invalidValues = append(invalidValues, val)
-		}
+	if formType == domain.AddBatchColmeiaForm && !containsInt(addBatchColmeiaFormSizes, len(formValues)) {
+		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
+	validationPerFormValue := getValidationsPerFormValue(formType, len(formValues))
+
+	invalidValues := []string{}
+	for idx, val := range validationPerFormValue {
+		isValid := val(formValues[idx])
+		if !isValid {
+			invalidValues = append(invalidValues, formValues[idx])
+		}
+	}
 	if len(invalidValues) > 0 {
-		return errs.NewValidationError(fmt.Sprintf("Dados inválidos (%s).", strings.Join(reverse(invalidValues), ", ")))
+		return errs.NewValidationError(fmt.Sprintf("Dados inválidos (%s).", strings.Join(invalidValues, ", ")))
 	}
 
 	return nil
 }
 
+func getValidationsPerFormValue(interactiontype domain.InteractionType, formSize int) map[int]func(string) bool {
+
+	validationPerFormValue := make(map[int]func(string) bool)
+	if formSize == 3 {
+		validationPerFormValue[0] = isValidSpecies
+		validationPerFormValue[1] = isValidStartingDate
+		validationPerFormValue[2] = isValidStatus
+	}
+	if formSize == 4 && interactiontype == domain.AddColmeiaForm {
+		validationPerFormValue[0] = isValidQRCode
+		validationPerFormValue[1] = isValidSpecies
+		validationPerFormValue[2] = isValidStartingDate
+		validationPerFormValue[3] = isValidStatus
+	}
+	if formSize == 4 && interactiontype == domain.AddBatchColmeiaForm {
+		validationPerFormValue[0] = isValidQuantity
+		validationPerFormValue[1] = isValidSpecies
+		validationPerFormValue[2] = isValidStartingDate
+		validationPerFormValue[3] = isValidStatus
+	}
+	if formSize == 5 {
+		validationPerFormValue[0] = isValidQuantity
+		validationPerFormValue[1] = isValidQRCode
+		validationPerFormValue[2] = isValidSpecies
+		validationPerFormValue[3] = isValidStartingDate
+		validationPerFormValue[4] = isValidStatus
+
+	}
+	return validationPerFormValue
+}
+
+func isValidQuantity(v string) bool {
+	_, err := strconv.Atoi(v)
+	return err == nil
+}
+
+func isValidQRCode(v string) bool {
+	_, err := strconv.Atoi(v)
+	return err == nil
+}
+
+func isValidSpecies(v string) bool {
+	err := domain.ValidateSpecies(v)
+	return err == nil
+}
+
+func isValidStartingDate(v string) bool {
+	_, err := time.Parse("02/01/2006", v)
+	return err == nil
+}
+func isValidStatus(v string) bool {
+	err := domain.ValidateStatus(v)
+	return err == nil
+}
+
 func convertToFormValues(rawText string) []string {
 	formSeparator := "\n"
-	return reverse(convertStringToSlice(rawText, formSeparator))
+	return convertStringToSlice(rawText, formSeparator)
 }
 
 func convertStringToSlice(s string, separator string) []string {
@@ -130,15 +228,7 @@ func convertStringToSlice(s string, separator string) []string {
 	return slice
 }
 
-func reverse(s []string) []string {
-	rev := make([]string, len(s))
-	for i, v := range s {
-		rev[len(s)-1-i] = v
-	}
-	return rev
-}
-
-func contains(slice []int, value int) bool {
+func containsInt(slice []int, value int) bool {
 	for _, v := range slice {
 		if v == value {
 			return true
@@ -147,32 +237,17 @@ func contains(slice []int, value int) bool {
 	return false
 }
 
-func (cs ChatbotServiceImpl) GenerateMessage(from, body string) string {
-
-	currentState := cs.userInteractionStateMap[from]
-
-	switch currentState {
-	case 0:
-		cs.setStateWithLock(from, domain.MainMenu)
-		return "Olá, meliponicultor! O que você quer fazer?\n Digite o número correspondente:\n 1. Listar contagem de colmeias\n 2. Adicionar colmeia\n 3. Adicionar várias colmeias\n 4. (em desenvolvimento) Escrever formulário de visita técnica\n 5. (em desenvolvimento) Listar tarefas pendentes"
-	case domain.MainMenu:
-		switch body {
-		case "1":
-			// TODO: send list (getColmeias)
-			cs.clearStateWithLock(from)
-			return "Aqui está sua lista de colmeias!"
-		case "2":
-			// TODO: create colmeia (createColmeia)
-			cs.clearStateWithLock(from)
-			return "Vamos criar um registro de colmeia!"
-		case "3":
-			// TODO: create colmeia in batch (?)
-			cs.clearStateWithLock(from)
-			return "Vamos criar várias registro de colmeia!"
+func containsString(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
 		}
 	}
+	return false
+}
 
-	return "Não entendi"
+func (cs *ChatbotServiceImpl) updateUserInteractionState(user string, state domain.InteractionType) {
+
 }
 
 func (cs *ChatbotServiceImpl) setStateWithLock(user string, currentState domain.InteractionType) {
