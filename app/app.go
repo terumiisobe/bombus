@@ -7,6 +7,7 @@ import (
 
 	"bombus/config"
 	"bombus/domain"
+	"bombus/repository"
 	"bombus/service"
 
 	"github.com/gorilla/mux"
@@ -27,8 +28,9 @@ func Start() {
 
 	// wiring
 	// TODO: replace to actual and not stubs
-	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(domain.NewColmeiaRepositoryStub())}
-	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub())}
+	colmeiaService := service.NewColmeiaService(repository.NewColmeiaRepositoryStub())
+	colmeiaHandler := ColmeiaHandler{colmeiaService}
+	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)

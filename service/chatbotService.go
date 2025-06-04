@@ -42,12 +42,13 @@ func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]dom
 func (cs ChatbotServiceImpl) processInteractionAndGenerateResponse(user, input string) string {
 	userCurrentInteractionState := cs.userInteractionStateMap[user]
 
+	//TODO: integrate GetNextInteraction, executeAction, GenerateMessage into interaction struct
 	userNextInteractionState, err := GetNextInteraction(userCurrentInteractionState, input)
 	if err != nil {
 		// validation error
 	}
-	result := cs.executeAction(userNextInteractionState, input)
-	response := GenerateMessage(userNextInteractionState, result)
+	result, err := cs.executeAction(userNextInteractionState, input)
+	response := cs.GenerateMessage(userNextInteractionState, result)
 
 	cs.updateUserInteractionState(user, userNextInteractionState)
 	return response
@@ -79,42 +80,81 @@ func GetNextInteraction(state domain.InteractionType, input string) (domain.Inte
 }
 
 // impure function
-func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input string) string {
-	// if state == domain.ListColmeias {
-	// 	cs.colmeiaService.GetAllColmeia()
-	// }
+func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input string) (string, *errs.AppError) {
+	if state == domain.ListColmeias {
+		count := cs.colmeiaService.CountPerSpecies()
+		return convertMapToString(count), nil
+	}
+	if state == domain.AddColmeiaForm {
+		colmeia := convertToColmeia(input)
+		err := cs.colmeiaService.CreateColmeia(colmeia)
+		if err != nil {
+			// server error
+		}
+		return generateSummary(colmeia), nil
+	}
+	if state == domain.AddBatchColmeiaForm {
+		quantity, colmeia := convertToMultipleColmeia(input)
+		err := cs.colmeiaService.CreateBatchColmeia(quantity, colmeia)
+		if err != nil {
+			// server error
+		}
+		return generateBatchSummary(quantity, colmeia), nil
+	}
+	return "", nil
 }
 
-func GenerateMessage(state domain.InteractionType, input string) string {
-	// state := cs.userInteractionStateMap[user]
-	// if state == domain.AddColmeiaForm {
-	// 	err := ValidateInput(state, input)
-	// 	if err != nil {
-	// 		return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
-	// 	}
-	// 	return cs.interactionRepo.GetTextByType(domain.Success)
-	// }
-	// if state == domain.AddBatchColmeiaForm {
-	// 	err := ValidateInput(state, input)
-	// 	if err != nil {
-	// 		return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
-	// 	}
-	// 	return cs.interactionRepo.GetTextByType(domain.Success)
-	// }
-	// if state == domain.ListColmeias {
-	// 	return cs.interactionRepo.GetTextByType(domain.MainMenu)
-	// }
-	// if input == "1" {
-	// 	return cs.interactionRepo.GetTextByType(domain.ListColmeias)
-	// }
-	// if input == "2" {
-	// 	return cs.interactionRepo.GetTextByType(domain.AddColmeiaForm)
-	// }
-	// if input == "3" {
-	// 	return cs.interactionRepo.GetTextByType(domain.AddBatchColmeiaForm)
-	// }
-	// return cs.interactionRepo.GetTextByType(domain.MainMenu)
+// TODO: move to interaction AddColmeiaForm
+func generateSummary(c domain.Colmeia) string {
 	return ""
+}
+
+// TODO: move to interaction AddBatchColmeiaForm
+func generateBatchSummary(quantity int, c domain.Colmeia) string {
+	return ""
+}
+
+// TODO: move to domain.colmeia
+func convertToColmeia(s string) domain.Colmeia {
+	return domain.Colmeia{}
+}
+
+func convertToMultipleColmeia(s string) (int, domain.Colmeia) {
+	return 0, domain.Colmeia{}
+}
+
+func convertMapToString(m map[int]int) string {
+	return ""
+}
+
+func (cs ChatbotServiceImpl) GenerateMessage(state domain.InteractionType, input string) string {
+	if state == domain.AddColmeiaForm {
+		err := ValidateInput(state, input)
+		if err != nil {
+			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+		}
+		return cs.interactionRepo.GetTextByType(domain.Success)
+	}
+	if state == domain.AddBatchColmeiaForm {
+		err := ValidateInput(state, input)
+		if err != nil {
+			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+		}
+		return cs.interactionRepo.GetTextByType(domain.Success)
+	}
+	if state == domain.ListColmeias {
+		return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	}
+	if input == "1" {
+		return cs.interactionRepo.GetTextByType(domain.ListColmeias)
+	}
+	if input == "2" {
+		return cs.interactionRepo.GetTextByType(domain.AddColmeiaForm)
+	}
+	if input == "3" {
+		return cs.interactionRepo.GetTextByType(domain.AddBatchColmeiaForm)
+	}
+	return cs.interactionRepo.GetTextByType(domain.MainMenu)
 }
 
 func ValidateInput(state domain.InteractionType, input string) *errs.AppError {
