@@ -11,6 +11,7 @@ type ColmeiaService interface {
 	GetColmeia(string) (*domain.Colmeia, *errs.AppError)
 	CreateColmeia(domain.Colmeia) *errs.AppError
 	CountBySpecies() (map[string]int, *errs.AppError)
+	CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError)
 }
 
 func NewColmeiaService(repository repository.ColmeiaRepository) ColmeiaServiceImplDefault {

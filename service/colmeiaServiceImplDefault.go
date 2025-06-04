@@ -34,3 +34,18 @@ func (s ColmeiaServiceImplDefault) CountBySpecies() (map[string]int, *errs.AppEr
 	}
 	return countBySpecies, nil
 }
+func (s ColmeiaServiceImplDefault) CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError) {
+	colmeias, err := s.repo.FindAll("", "")
+	if err != nil {
+		return nil, err
+	}
+
+	countBySpeciesAndStatus := make(map[string]map[string]int)
+	for _, colmeia := range colmeias {
+		if _, ok := countBySpeciesAndStatus[colmeia.Species.String()]; !ok {
+			countBySpeciesAndStatus[colmeia.Species.String()] = make(map[string]int)
+		}
+		countBySpeciesAndStatus[colmeia.Species.String()][colmeia.Status.String()]++
+	}
+	return countBySpeciesAndStatus, nil
+}

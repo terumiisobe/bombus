@@ -34,6 +34,7 @@ func Start() {
 	router.HandleFunc("/colmeias/{id:[0-9]+}", colmeiaHandler.getColmeia).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias", colmeiaHandler.createColmeia).Methods(http.MethodPost)
 	router.HandleFunc("/colmeias/count-by-species", colmeiaHandler.countBySpecies).Methods(http.MethodGet)
+	router.HandleFunc("/colmeias/count-by-species-and-status", colmeiaHandler.countBySpeciesAndStatus).Methods(http.MethodGet)
 
 	router.HandleFunc("/webhook", chatbotHandler.handle).Methods(http.MethodPost)
 

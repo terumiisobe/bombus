@@ -70,6 +70,15 @@ func (ch *ColmeiaHandler) countBySpecies(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (ch *ColmeiaHandler) countBySpeciesAndStatus(w http.ResponseWriter, r *http.Request) {
+	countBySpeciesAndStatus, err := ch.s.CountBySpeciesAndStatus()
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
+	} else {
+		writeResponse(w, http.StatusOK, countBySpeciesAndStatus)
+	}
+}
+
 func writeResponse(w http.ResponseWriter, code int, data any) {
 	w.WriteHeader(code)
 	w.Header().Add("Content-Type", "application/json")
