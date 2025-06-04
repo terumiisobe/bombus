@@ -32,7 +32,7 @@ func NewColmeiaRepositoryDB() ColmeiaRepositoryImplDb {
 		panic(err)
 	}
 
-	fmt.Println("connected to mysql")
+	fmt.Println("Connected to MySQL")
 
 	return ColmeiaRepositoryImplDb{client}
 }
@@ -54,7 +54,7 @@ func (d ColmeiaRepositoryImplDb) FindAll(status string, species string) ([]domai
 	}
 	if err != nil {
 		log.Println("Error while getting colmeias table: " + err.Error())
-		return nil, errs.NewUnexpectedError(err.Error())
+		return nil, errs.NewDatabaseError(err.Error())
 	}
 
 	colmeias := make([]domain.Colmeia, 0)
@@ -63,7 +63,7 @@ func (d ColmeiaRepositoryImplDb) FindAll(status string, species string) ([]domai
 		err := rows.Scan(&c.ID, &c.ColmeiaID, &c.QRCode, &c.Species, &c.StartingDate, &c.Status)
 		if err != nil {
 			log.Println("Error while scanning colmeias " + err.Error())
-			return nil, errs.NewUnexpectedError(err.Error())
+			return nil, errs.NewDatabaseError(err.Error())
 		}
 		colmeias = append(colmeias, c)
 	}
@@ -84,7 +84,7 @@ func (d ColmeiaRepositoryImplDb) ById(id string) (*domain.Colmeia, *errs.AppErro
 			return nil, errs.NewNotFoundError("Colmeia not found")
 		} else {
 			log.Println("Error while scanning colmeia " + err.Error())
-			return nil, errs.NewUnexpectedError("Unexpected database error")
+			return nil, errs.NewDatabaseError("Unexpected database error")
 		}
 	}
 
@@ -98,7 +98,7 @@ func (d ColmeiaRepositoryImplDb) Create(colmeia domain.Colmeia) *errs.AppError {
 	_, err := d.client.Exec(createSQL, colmeia.ID, colmeia.ColmeiaID, colmeia.QRCode, colmeia.Species, colmeia.StartingDate, colmeia.Status)
 	if err != nil {
 		log.Println("Error while creating colmeia: " + err.Error())
-		return errs.NewUnexpectedError(err.Error())
+		return errs.NewDatabaseError(err.Error())
 	}
 	return nil
 }
