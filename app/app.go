@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"bombus/config"
-	"bombus/domain"
+	"bombus/repository"
 	"bombus/service"
 
 	"github.com/gorilla/mux"
@@ -26,7 +26,7 @@ func Start() {
 	router := mux.NewRouter()
 
 	// wiring
-	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(domain.NewColmeiaRepositoryStub())}
+	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(repository.NewColmeiaRepositoryStub())}
 	chatbotHandler := ChatbotHandler{service.NewChatbotService()}
 
 	// define routes

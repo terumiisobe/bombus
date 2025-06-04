@@ -3,6 +3,7 @@ package service
 import (
 	"bombus/domain"
 	"bombus/errs"
+	"bombus/repository"
 )
 
 type ColmeiaService interface {
@@ -12,10 +13,10 @@ type ColmeiaService interface {
 }
 
 type DefaultColmeiaService struct {
-	repo domain.ColmeiaRepository
+	repo repository.ColmeiaRepository
 }
 
-func NewColmeiaService(repository domain.ColmeiaRepository) DefaultColmeiaService {
+func NewColmeiaService(repository repository.ColmeiaRepository) DefaultColmeiaService {
 	return DefaultColmeiaService{repository}
 }
 
