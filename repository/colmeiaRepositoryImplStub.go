@@ -11,13 +11,18 @@ type ColmeiaRepositoryImplStub struct {
 	colmeias []domain.Colmeia
 }
 
-func NewColmeiaRepositoryStub() ColmeiaRepositoryImplStub {
+func NewColmeiaRepositoryImplStub() ColmeiaRepositoryImplStub {
 	mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
 	colmeias := []domain.Colmeia{
 		{123, intPtr(123), nil, 1, mockTime, 1},
 		{456, intPtr(456), nil, 2, mockTime, 2},
+		{789, intPtr(789), nil, 2, mockTime, 2},
 	}
 
+	return ColmeiaRepositoryImplStub{colmeias}
+}
+
+func NewColmeiaRepositoryImplStubCustomData(colmeias []domain.Colmeia) ColmeiaRepositoryImplStub {
 	return ColmeiaRepositoryImplStub{colmeias}
 }
 

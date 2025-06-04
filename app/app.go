@@ -26,13 +26,14 @@ func Start() {
 	router := mux.NewRouter()
 
 	// wiring
-	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(repository.NewColmeiaRepositoryStub())}
+	colmeiaHandler := ColmeiaHandler{service.NewColmeiaService(repository.NewColmeiaRepositoryImplStub())}
 	chatbotHandler := ChatbotHandler{service.NewChatbotService()}
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias/{id:[0-9]+}", colmeiaHandler.getColmeia).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias", colmeiaHandler.createColmeia).Methods(http.MethodPost)
+	router.HandleFunc("/colmeias/count-by-species", colmeiaHandler.countBySpecies).Methods(http.MethodGet)
 
 	router.HandleFunc("/webhook", chatbotHandler.handle).Methods(http.MethodPost)
 
