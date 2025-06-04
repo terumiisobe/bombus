@@ -23,7 +23,7 @@ func NewInteractionRepositoryStub() InteractionRepositoryStub {
 func (s InteractionRepositoryStub) GetTextByType(t InteractionType) string {
 	for _, interaction := range s.interactions {
 		if interaction.typeName == t {
-			return interaction.text
+			return interaction.defaultText
 		}
 	}
 	return ""
@@ -32,10 +32,10 @@ func (s InteractionRepositoryStub) GetTextByType(t InteractionType) string {
 func (s InteractionRepositoryStub) GenerateText(t InteractionType, additionalInfo string) string {
 	for _, interaction := range s.interactions {
 		if interaction.typeName == Fail {
-			return fmt.Sprintf(interaction.text, additionalInfo)
+			return fmt.Sprintf(interaction.defaultText, additionalInfo)
 		}
 		if interaction.typeName == t {
-			return interaction.text
+			return interaction.defaultText
 		}
 	}
 	return ""

@@ -1,8 +1,12 @@
 package domain
 
+type interaction interface {
+	GenerateText(string) string
+}
+
 type Interaction struct {
-	typeName InteractionType
-	text     string
+	typeName    InteractionType
+	defaultText string
 }
 
 type InteractionRepository interface {
