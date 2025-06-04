@@ -2,8 +2,6 @@ package domain
 
 import (
 	"time"
-
-	"bombus/errs"
 )
 
 type Colmeia struct {
@@ -13,11 +11,4 @@ type Colmeia struct {
 	Species      Species
 	StartingDate time.Time
 	Status       Status
-}
-
-type ColmeiaRepository interface {
-	FindAll(string, string) ([]Colmeia, *errs.AppError)
-	ById(string) (*Colmeia, *errs.AppError)
-	Create(Colmeia) *errs.AppError
-	CountGroupedBySpecies() map[int]int
 }

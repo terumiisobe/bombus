@@ -1,35 +1,36 @@
-package domain
+package repository
 
 import (
+	"bombus/domain"
 	"bombus/errs"
 	"strconv"
 	"time"
 )
 
-type ColmeiaRepositoryStub struct {
-	colmeias []Colmeia
+type ColmeiaRepositoryImplStub struct {
+	colmeias []domain.Colmeia
 }
 
-func NewColmeiaRepositoryStub() ColmeiaRepositoryStub {
+func NewColmeiaRepositoryStub() ColmeiaRepositoryImplStub {
 	mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
-	colmeias := []Colmeia{
+	colmeias := []domain.Colmeia{
 		{123, intPtr(123), nil, 1, mockTime, 1},
 		{456, intPtr(456), nil, 2, mockTime, 2},
 		{789, intPtr(789), nil, 2, mockTime, 3},
 	}
 
-	return ColmeiaRepositoryStub{colmeias}
+	return ColmeiaRepositoryImplStub{colmeias}
 }
 
 func intPtr(i int) *int {
 	return &i
 }
 
-func (s ColmeiaRepositoryStub) FindAll(species, status string) ([]Colmeia, *errs.AppError) {
+func (s ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Colmeia, *errs.AppError) {
 	return s.colmeias, nil
 }
 
-func (s ColmeiaRepositoryStub) ById(id string) (*Colmeia, *errs.AppError) {
+func (s ColmeiaRepositoryImplStub) ById(id string) (*domain.Colmeia, *errs.AppError) {
 	colmeiaID, _ := strconv.Atoi(id)
 	for _, colmeia := range s.colmeias {
 		if colmeia.ID == colmeiaID {
@@ -39,12 +40,12 @@ func (s ColmeiaRepositoryStub) ById(id string) (*Colmeia, *errs.AppError) {
 	return nil, errs.NewNotFoundError("Colmeia not found")
 }
 
-func (s ColmeiaRepositoryStub) Create(colmeia Colmeia) *errs.AppError {
+func (s ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError {
 	s.colmeias = append(s.colmeias, colmeia)
 	return nil
 }
 
-func (s ColmeiaRepositoryStub) CountGroupedBySpecies() map[int]int {
+func (s ColmeiaRepositoryImplStub) CountGroupedBySpecies() map[int]int {
 	count := make(map[int]int)
 	for _, colmeia := range s.colmeias {
 		key := int(colmeia.Species)
