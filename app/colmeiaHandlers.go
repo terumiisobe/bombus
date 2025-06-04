@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"bombus/domain"
 	"bombus/service"
+
+	"github.com/gorilla/mux"
 )
 
 type Colmeia struct {
@@ -54,9 +55,27 @@ func (ch *ColmeiaHandler) createColmeia(w http.ResponseWriter, r *http.Request) 
 
 	err := ch.s.CreateColmeia(colmeia)
 	if err != nil {
-		writeResponse(w, http.StatusInternalServerError, err.AsMessage())
+		writeResponse(w, err.Code, err.AsMessage())
 	} else {
 		writeResponse(w, http.StatusCreated, nil)
+	}
+}
+
+func (ch *ColmeiaHandler) countBySpecies(w http.ResponseWriter, r *http.Request) {
+	countBySpecies, err := ch.s.CountBySpecies()
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
+	} else {
+		writeResponse(w, http.StatusOK, countBySpecies)
+	}
+}
+
+func (ch *ColmeiaHandler) countBySpeciesAndStatus(w http.ResponseWriter, r *http.Request) {
+	countBySpeciesAndStatus, err := ch.s.CountBySpeciesAndStatus()
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
+	} else {
+		writeResponse(w, http.StatusOK, countBySpeciesAndStatus)
 	}
 }
 
