@@ -11,14 +11,18 @@ type ColmeiaRepositoryImplStub struct {
 	colmeias []domain.Colmeia
 }
 
-func NewColmeiaRepositoryStub() ColmeiaRepositoryImplStub {
+func NewColmeiaRepositoryImplStub() ColmeiaRepositoryImplStub {
 	mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
 	colmeias := []domain.Colmeia{
 		{123, intPtr(123), nil, 1, mockTime, 1},
 		{456, intPtr(456), nil, 2, mockTime, 2},
-		{789, intPtr(789), nil, 2, mockTime, 3},
+		{789, intPtr(789), nil, 2, mockTime, 2},
 	}
 
+	return ColmeiaRepositoryImplStub{colmeias}
+}
+
+func NewColmeiaRepositoryImplStubCustomData(colmeias []domain.Colmeia) ColmeiaRepositoryImplStub {
 	return ColmeiaRepositoryImplStub{colmeias}
 }
 
@@ -45,14 +49,25 @@ func (s ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError
 	return nil
 }
 
-func (s ColmeiaRepositoryImplStub) CountGroupedBySpecies() map[int]int {
-	count := make(map[int]int)
+func (s ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppError) {
+	count := make(map[string]int)
 	for _, colmeia := range s.colmeias {
-		key := int(colmeia.Species)
-		if _, keyExists := count[key]; keyExists {
-			count[key]++
-		}
-		count[key] = 1
+		key := strconv.Itoa(int(colmeia.Species))
+		count[key]++
 	}
-	return count
+	return count, nil
+}
+
+func (s ColmeiaRepositoryImplStub) CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError) {
+	count := make(map[string]map[string]int)
+	for _, colmeia := range s.colmeias {
+		species := strconv.Itoa(int(colmeia.Species))
+		status := strconv.Itoa(int(colmeia.Status))
+
+		if _, exists := count[species]; !exists {
+			count[species] = make(map[string]int)
+		}
+		count[species][status]++
+	}
+	return count, nil
 }

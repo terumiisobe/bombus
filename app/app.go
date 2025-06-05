@@ -28,7 +28,7 @@ func Start() {
 
 	// wiring
 	// TODO: replace to actual and not stubs
-	colmeiaService := service.NewColmeiaService(repository.NewColmeiaRepositoryStub())
+	colmeiaService := service.NewColmeiaService(repository.NewColmeiaRepositoryImplStub())
 	colmeiaHandler := ColmeiaHandler{colmeiaService}
 	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
 
@@ -36,6 +36,8 @@ func Start() {
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias/{id:[0-9]+}", colmeiaHandler.getColmeia).Methods(http.MethodGet)
 	router.HandleFunc("/colmeias", colmeiaHandler.createColmeia).Methods(http.MethodPost)
+	router.HandleFunc("/colmeias/count-by-species", colmeiaHandler.countBySpecies).Methods(http.MethodGet)
+	router.HandleFunc("/colmeias/count-by-species-and-status", colmeiaHandler.countBySpeciesAndStatus).Methods(http.MethodGet)
 
 	router.HandleFunc("/webhook", chatbotHandler.handle).Methods(http.MethodPost)
 

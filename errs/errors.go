@@ -1,6 +1,9 @@
 package errs
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 type AppError struct {
 	Code    int    `json:",omitempty"`
@@ -34,5 +37,12 @@ func NewValidationError(message string) *AppError {
 	return &AppError{
 		Code:    http.StatusBadRequest,
 		Message: message,
+	}
+}
+
+func NewDatabaseError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusInternalServerError,
+		Message: fmt.Sprintf("Database error: %s", message),
 	}
 }
