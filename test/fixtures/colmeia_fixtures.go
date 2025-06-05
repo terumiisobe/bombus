@@ -17,6 +17,10 @@ func NewColmeiaFixtures() *ColmeiaFixtures {
 	}
 }
 
+func (f *ColmeiaFixtures) EmptyColmeia() []domain.Colmeia {
+	return []domain.Colmeia{}
+}
+
 // SingleColmeia returns a single Colmeia for basic tests
 func (f *ColmeiaFixtures) SingleColmeia() []domain.Colmeia {
 	return []domain.Colmeia{
