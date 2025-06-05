@@ -34,14 +34,15 @@ func (s ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Col
 	return s.colmeias, nil
 }
 
-func (s ColmeiaRepositoryImplStub) ById(id string) (*domain.Colmeia, *errs.AppError) {
+func (s ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppError) {
+	var colmeia domain.Colmeia
 	colmeiaID, _ := strconv.Atoi(id)
 	for _, colmeia := range s.colmeias {
 		if colmeia.ID == colmeiaID {
-			return &colmeia, nil
+			return colmeia, nil
 		}
 	}
-	return nil, errs.NewNotFoundError("Colmeia not found")
+	return colmeia, errs.NewNotFoundError("Colmeia not found")
 }
 
 func (s ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError {
