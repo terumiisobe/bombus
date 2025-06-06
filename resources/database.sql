@@ -30,13 +30,15 @@ INSERT INTO bombus.species (id, name) VALUES
 DROP TABLE IF EXISTS bombus.colmeias;
 
 CREATE TABLE bombus.colmeias (
-  id INT NOT NULL,
-  colmeia_id VARCHAR(10),
-  qr_code BLOB,
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  colmeia_id VARCHAR(50) UNIQUE,
+  qr_code VARCHAR(255),
   species_id INT NOT NULL,
-  starting_date DATETIME,
+  starting_date DATETIME NOT NULL,
   status_id INT NOT NULL,
-  PRIMARY KEY (id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_species_status (species_id, status_id),
   FOREIGN KEY (species_id) REFERENCES bombus.species(id),
   FOREIGN KEY (status_id) REFERENCES bombus.status(id)
 );
