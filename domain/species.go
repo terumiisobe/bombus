@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -43,4 +44,17 @@ func ValidateSpecies(s string) error {
 		return errors.New("not a species enum")
 	}
 	return nil
+}
+
+func ParseSpecies(s string) (Species, error) {
+	switch s {
+	case TetragosniscaAngustula.String():
+		return TetragosniscaAngustula, nil
+	case PlebeiaSp.String():
+		return PlebeiaSp, nil
+	case MeliponaQuadrifasciata.String():
+		return MeliponaQuadrifasciata, nil
+	default:
+		return Species(0), fmt.Errorf("invalid species: %s", s)
+	}
 }

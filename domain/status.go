@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -11,6 +12,7 @@ const (
 	HoneyReady Status = iota + 1
 	Induzida
 	Developing
+	MelgueiraReady
 	PetBottle
 	Empty
 )
@@ -23,10 +25,10 @@ func (s Status) String() string {
 		return "com mel"
 	case Induzida:
 		return "induzida"
+	case MelgueiraReady:
+		return "pronto para melgueira"
 	case Developing:
 		return "em desenvolvimento"
-	case PetBottle:
-		return "PET"
 	case Empty:
 		return "vazia"
 	default:
@@ -40,4 +42,17 @@ func ValidateStatus(s string) error {
 		return errors.New("not a status enum")
 	}
 	return nil
+}
+
+func ParseStatus(s string) (Status, error) {
+	switch s {
+	case Developing.String():
+		return Developing, nil
+	case HoneyReady.String():
+		return HoneyReady, nil
+	case PetBottle.String():
+		return PetBottle, nil
+	default:
+		return Status(0), fmt.Errorf("invalid status: %s", s)
+	}
 }
