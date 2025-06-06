@@ -88,13 +88,28 @@ func (d ColmeiaRepositoryImplDB) ById(id string) (domain.Colmeia, *errs.AppError
 	return c, nil
 }
 
-func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) *errs.AppError {
-	createSQL := "INSERT INTO colmeias (id, colmeia_id, qr_code, species_id, starting_date, status_id) VALUES (?, ?, ?, ?, ?, ?)"
+func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) (uint64, *errs.AppError) {
+	createSQL := "INSERT INTO colmeias (colmeia_id, qr_code, species_id, starting_date, status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
-	_, err := d.client.Exec(createSQL, colmeia.ID, colmeia.ColmeiaID, colmeia.QRCode, colmeia.Species, colmeia.StartingDate, colmeia.Status)
+	result, err := d.client.Exec(createSQL,
+		colmeia.ColmeiaID,
+		colmeia.QRCode,
+		colmeia.Species,
+		colmeia.StartingDate,
+		colmeia.Status,
+		colmeia.CreatedAt,
+		colmeia.UpdatedAt)
 	if err != nil {
 		log.Println("Error while creating colmeia: " + err.Error())
-		return errs.NewDatabaseError(err.Error())
+		return 0, errs.NewDatabaseError(err.Error())
 	}
-	return nil
+
+	// Get the auto-generated ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Println("Error getting last insert ID: " + err.Error())
+		return 0, errs.NewDatabaseError(err.Error())
+	}
+
+	return uint64(id), nil
 }

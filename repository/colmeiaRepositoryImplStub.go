@@ -30,11 +30,11 @@ func intPtr(i int) *int {
 	return &i
 }
 
-func (s ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Colmeia, *errs.AppError) {
+func (s *ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Colmeia, *errs.AppError) {
 	return s.colmeias, nil
 }
 
-func (s ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppError) {
+func (s *ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppError) {
 	var colmeia domain.Colmeia
 	colmeiaID, _ := strconv.ParseUint(id, 10, 64)
 	for _, colmeia := range s.colmeias {
@@ -45,12 +45,12 @@ func (s ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppErr
 	return colmeia, errs.NewNotFoundError("Colmeia not found")
 }
 
-func (s ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError {
+func (s *ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) (uint64, *errs.AppError) {
 	s.colmeias = append(s.colmeias, colmeia)
-	return nil
+	return colmeia.ID, nil
 }
 
-func (s ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppError) {
+func (s *ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppError) {
 	count := make(map[string]int)
 	for _, colmeia := range s.colmeias {
 		key := strconv.Itoa(int(colmeia.Species))
@@ -59,7 +59,7 @@ func (s ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppEr
 	return count, nil
 }
 
-func (s ColmeiaRepositoryImplStub) CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError) {
+func (s *ColmeiaRepositoryImplStub) CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError) {
 	count := make(map[string]map[string]int)
 	for _, colmeia := range s.colmeias {
 		species := strconv.Itoa(int(colmeia.Species))
@@ -73,6 +73,6 @@ func (s ColmeiaRepositoryImplStub) CountBySpeciesAndStatus() (map[string]map[str
 	return count, nil
 }
 
-func (s ColmeiaRepositoryImplStub) GetColmeias() []domain.Colmeia {
+func (s *ColmeiaRepositoryImplStub) GetColmeias() []domain.Colmeia {
 	return s.colmeias
 }
