@@ -28,7 +28,7 @@ func Start() {
 
 	// wiring
 	// TODO: replace to actual and not stubs
-	colmeiaService := service.NewColmeiaService(repository.NewColmeiaRepositoryImplStub())
+	colmeiaService := service.NewColmeiaServiceImplDefault(repository.NewColmeiaRepositoryImplStub())
 	colmeiaHandler := ColmeiaHandler{colmeiaService}
 	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
 
