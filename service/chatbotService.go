@@ -82,14 +82,17 @@ func GetNextInteraction(state domain.InteractionType, input string) (domain.Inte
 // impure function
 func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input string) (string, *errs.AppError) {
 	if state == domain.ListColmeias {
-		count := cs.colmeiaService.CountPerSpecies()
-		return convertMapToString(count), nil
+		countBySpecies, err := cs.colmeiaService.CountBySpecies()
+		if err != nil {
+			return "", err
+		}
+		return convertMapToString(countBySpecies), nil
 	}
 	if state == domain.AddColmeiaForm {
 		colmeia := convertToColmeia(input)
 		err := cs.colmeiaService.CreateColmeia(colmeia)
 		if err != nil {
-			// server error
+			return "", err
 		}
 		return generateSummary(colmeia), nil
 	}
@@ -106,7 +109,7 @@ func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input s
 
 // TODO: move to interaction AddColmeiaForm
 func generateSummary(c domain.Colmeia) string {
-	return ""
+	return fmt.Sprintf("Colmeia criada com sucesso!\nIdentificador: %s \nEspecie: %s \nStatus: %s \nData de início: %s", c.ColmeiaID, c.Species.String(), c.Status.String(), c.StartingDate.Format("02/01/2006"))
 }
 
 // TODO: move to interaction AddBatchColmeiaForm
@@ -123,8 +126,13 @@ func convertToMultipleColmeia(s string) (int, domain.Colmeia) {
 	return 0, domain.Colmeia{}
 }
 
-func convertMapToString(m map[int]int) string {
-	return ""
+// TODO: move to interaction ListColmeia
+func convertMapToString(m map[string]int) string {
+	lines := []string{}
+	for idx, val := range m {
+		lines = append(lines, fmt.Sprintf("%s: %d", idx, val))
+	}
+	return strings.Join(lines, "\n")
 }
 
 func (cs ChatbotServiceImpl) GenerateMessage(state domain.InteractionType, input string) string {
