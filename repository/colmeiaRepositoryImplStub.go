@@ -14,9 +14,9 @@ type ColmeiaRepositoryImplStub struct {
 func NewColmeiaRepositoryImplStub() ColmeiaRepositoryImplStub {
 	mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
 	colmeias := []domain.Colmeia{
-		{123, intPtr(123), nil, 1, mockTime, 1},
-		{456, intPtr(456), nil, 2, mockTime, 2},
-		{789, intPtr(789), nil, 2, mockTime, 2},
+		{uint64(123), intPtr(123), nil, domain.TetragosniscaAngustula, mockTime, domain.Developing, mockTime, mockTime},
+		{uint64(456), intPtr(456), nil, domain.PlebeiaSp, mockTime, domain.Developing, mockTime, mockTime},
+		{uint64(789), intPtr(789), nil, domain.MeliponaQuadrifasciata, mockTime, domain.Developing, mockTime, mockTime},
 	}
 
 	return ColmeiaRepositoryImplStub{colmeias}
@@ -36,7 +36,7 @@ func (s ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Col
 
 func (s ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppError) {
 	var colmeia domain.Colmeia
-	colmeiaID, _ := strconv.Atoi(id)
+	colmeiaID, _ := strconv.ParseUint(id, 10, 64)
 	for _, colmeia := range s.colmeias {
 		if colmeia.ID == colmeiaID {
 			return colmeia, nil
@@ -71,4 +71,8 @@ func (s ColmeiaRepositoryImplStub) CountBySpeciesAndStatus() (map[string]map[str
 		count[species][status]++
 	}
 	return count, nil
+}
+
+func (s ColmeiaRepositoryImplStub) GetColmeias() []domain.Colmeia {
+	return s.colmeias
 }

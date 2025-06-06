@@ -5,10 +5,12 @@ import (
 )
 
 type Colmeia struct {
-	ID           int
+	ID           uint64
 	ColmeiaID    *int    // Additional visual ID
 	QRCode       *string // Can be NULL
 	Species      Species
 	StartingDate time.Time
 	Status       Status
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
