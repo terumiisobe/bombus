@@ -2,6 +2,7 @@ package builders
 
 import (
 	"bombus/domain"
+	"bombus/service/dto"
 	"time"
 )
 
@@ -23,7 +24,7 @@ func NewColmeiaBuilder() *ColmeiaBuilder {
 }
 
 // WithID sets the ID
-func (b *ColmeiaBuilder) WithID(id int) *ColmeiaBuilder {
+func (b *ColmeiaBuilder) WithID(id uint64) *ColmeiaBuilder {
 	b.colmeia.ID = id
 	return b
 }
@@ -61,4 +62,19 @@ func (b *ColmeiaBuilder) WithStatus(status domain.Status) *ColmeiaBuilder {
 // Build returns the constructed Colmeia
 func (b *ColmeiaBuilder) Build() domain.Colmeia {
 	return b.colmeia
+}
+
+func (b *ColmeiaBuilder) BuildDTO() dto.Colmeia {
+	species := b.colmeia.Species.String()
+	status := b.colmeia.Status.String()
+	startingDate := b.colmeia.StartingDate.Format(time.DateOnly)
+
+	return dto.Colmeia{
+		ID:           &b.colmeia.ID,
+		ColmeiaID:    b.colmeia.ColmeiaID,
+		QRCode:       b.colmeia.QRCode,
+		Species:      &species,
+		StartingDate: &startingDate,
+		Status:       &status,
+	}
 }
