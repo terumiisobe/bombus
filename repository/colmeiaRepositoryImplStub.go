@@ -45,9 +45,9 @@ func (s *ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppEr
 	return colmeia, errs.NewNotFoundError("Colmeia not found")
 }
 
-func (s *ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) (uint64, *errs.AppError) {
+func (s *ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError {
 	s.colmeias = append(s.colmeias, colmeia)
-	return colmeia.ID, nil
+	return nil
 }
 
 func (s *ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppError) {
