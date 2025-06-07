@@ -89,41 +89,19 @@ func (cs ChatbotServiceImpl) executeAction(state domain.InteractionType, input s
 		return convertMapToString(countBySpecies), nil
 	}
 	if state == domain.AddColmeiaForm {
-		colmeia := convertToColmeia(input)
-		err := cs.colmeiaService.CreateColmeia(colmeia)
-		if err != nil {
-			return "", err
-		}
-		return generateSummary(colmeia), nil
+		// TODO: call create colmeia
+		return "", nil
 	}
 	if state == domain.AddBatchColmeiaForm {
-		quantity, colmeia := convertToMultipleColmeia(input)
-		err := cs.colmeiaService.CreateBatchColmeia(quantity, colmeia)
-		if err != nil {
-			// server error
-		}
-		return generateBatchSummary(quantity, colmeia), nil
+		// TODO: call create batch colmeia
+		return "", nil
 	}
 	return "", nil
-}
-
-// TODO: move to interaction AddColmeiaForm
-func generateSummary(c domain.Colmeia) string {
-	return fmt.Sprintf("Colmeia criada com sucesso!\nIdentificador: %s \nEspecie: %s \nStatus: %s \nData de início: %s", c.ColmeiaID, c.Species.String(), c.Status.String(), c.StartingDate.Format("02/01/2006"))
-}
-
-// TODO: move to interaction AddBatchColmeiaForm
-func generateBatchSummary(quantity int, c domain.Colmeia) string {
-	return ""
 }
 
 // TODO: move to domain.colmeia
 func convertToColmeia(s string) domain.Colmeia {
 	return domain.Colmeia{}
-}
-
-func convertToMultipleColmeia(s string) (int, domain.Colmeia) {
-	return 0, domain.Colmeia{}
 }
 
 // TODO: move to interaction ListColmeia

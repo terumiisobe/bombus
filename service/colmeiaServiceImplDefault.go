@@ -6,6 +6,10 @@ import (
 	"bombus/repository"
 )
 
+func NewColmeiaServiceImplDefault(repo repository.ColmeiaRepository) ColmeiaServiceImplDefault {
+	return ColmeiaServiceImplDefault{repo}
+}
+
 type ColmeiaServiceImplDefault struct {
 	repo repository.ColmeiaRepository
 }
@@ -14,7 +18,7 @@ func (s ColmeiaServiceImplDefault) GetAllColmeia(status string, species string) 
 	return s.repo.FindAll(status, species)
 }
 
-func (s ColmeiaServiceImplDefault) GetColmeia(id string) (*domain.Colmeia, *errs.AppError) {
+func (s ColmeiaServiceImplDefault) GetColmeia(id string) (domain.Colmeia, *errs.AppError) {
 	return s.repo.ById(id)
 }
 
