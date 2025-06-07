@@ -20,8 +20,8 @@ func init() {
 
 func TestColmeiaService_CountBySpecies(t *testing.T) {
 	t.Run("Empty repo", func(t *testing.T) {
-		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData([]domain.Colmeia{})
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.EmptyColmeia())
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpecies()
 		want := map[string]int{}
@@ -33,7 +33,7 @@ func TestColmeiaService_CountBySpecies(t *testing.T) {
 
 	t.Run("Repo with one colmeia", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.SingleColmeia())
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpecies()
 		want := map[string]int{
@@ -47,7 +47,7 @@ func TestColmeiaService_CountBySpecies(t *testing.T) {
 
 	t.Run("Repo with multiple colmeia of same species", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.MultipleColmeiaSameSpecies())
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpecies()
 		want := map[string]int{
@@ -61,7 +61,7 @@ func TestColmeiaService_CountBySpecies(t *testing.T) {
 
 	t.Run("Repo with multiple colmeia of different species", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.MultipleColmeiaDifferentSpecies())
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpecies()
 		want := map[string]int{
@@ -75,11 +75,10 @@ func TestColmeiaService_CountBySpecies(t *testing.T) {
 		}
 	})
 }
-
 func TestColmeiaService_CountBySpeciesAndStatus(t *testing.T) {
 	t.Run("Empty repo", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData([]domain.Colmeia{})
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpeciesAndStatus()
 		want := map[string]map[string]int{}
@@ -91,7 +90,7 @@ func TestColmeiaService_CountBySpeciesAndStatus(t *testing.T) {
 
 	t.Run("Repo with one colmeia", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.SingleColmeia())
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpeciesAndStatus()
 		want := map[string]map[string]int{
@@ -107,7 +106,7 @@ func TestColmeiaService_CountBySpeciesAndStatus(t *testing.T) {
 
 	t.Run("Repo with multiple colmeia of different species and status", func(t *testing.T) {
 		colmeiaRepository := repository.NewColmeiaRepositoryImplStubCustomData(colmeiaFixtures.MultipleColmeiaDifferentSpeciesAndStatus())
-		colmeiaService = service.NewColmeiaService(colmeiaRepository)
+		colmeiaService = service.NewColmeiaServiceImplDefault(colmeiaRepository)
 
 		got, _ := colmeiaService.CountBySpeciesAndStatus()
 		want := map[string]map[string]int{
