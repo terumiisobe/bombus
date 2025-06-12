@@ -1,5 +1,11 @@
 package domain
 
+import (
+	"errors"
+	"fmt"
+	"strconv"
+)
+
 type Species int
 
 const (
@@ -10,6 +16,8 @@ const (
 	ScaptotrigonaBipunctata
 	ScaptotrigonaDepilis
 )
+
+const SpeciesCount = 6
 
 func (s Species) String() string {
 	switch s {
@@ -27,5 +35,26 @@ func (s Species) String() string {
 		return "Melipona Bicolor"
 	default:
 		return "Espécie Desconhecida"
+	}
+}
+
+func ValidateSpecies(s string) error {
+	v, err := strconv.Atoi(s)
+	if err != nil || v <= 0 || v > SpeciesCount {
+		return errors.New("not a species enum")
+	}
+	return nil
+}
+
+func ParseSpecies(s string) (Species, error) {
+	switch s {
+	case TetragosniscaAngustula.String():
+		return TetragosniscaAngustula, nil
+	case PlebeiaSp.String():
+		return PlebeiaSp, nil
+	case MeliponaQuadrifasciata.String():
+		return MeliponaQuadrifasciata, nil
+	default:
+		return Species(0), fmt.Errorf("invalid species: %s", s)
 	}
 }

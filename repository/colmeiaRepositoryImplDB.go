@@ -12,12 +12,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type ColmeiaRepositoryImplDb struct {
+type ColmeiaRepositoryImplDB struct {
 	client *sql.DB
 }
 
-func NewColmeiaRepositoryDB() ColmeiaRepositoryImplDb {
-
+func NewColmeiaRepositoryDB() ColmeiaRepositoryImplDB {
 	client, err := sql.Open("mysql", "bombus_usr:bombuspass@tcp(localhost:3306)/bombus?parseTime=true")
 	if err != nil {
 		panic(err)
@@ -34,11 +33,10 @@ func NewColmeiaRepositoryDB() ColmeiaRepositoryImplDb {
 
 	fmt.Println("Connected to MySQL")
 
-	return ColmeiaRepositoryImplDb{client}
+	return ColmeiaRepositoryImplDB{client}
 }
 
-func (d ColmeiaRepositoryImplDb) FindAll(status string, species string) ([]domain.Colmeia, *errs.AppError) {
-
+func (d ColmeiaRepositoryImplDB) FindAll(status string, species string) ([]domain.Colmeia, *errs.AppError) {
 	var rows *sql.Rows
 	var err error
 
@@ -71,8 +69,7 @@ func (d ColmeiaRepositoryImplDb) FindAll(status string, species string) ([]domai
 	return colmeias, nil
 }
 
-func (d ColmeiaRepositoryImplDb) ById(id string) (*domain.Colmeia, *errs.AppError) {
-
+func (d ColmeiaRepositoryImplDB) ById(id string) (*domain.Colmeia, *errs.AppError) {
 	byIdSQL := "select * from colmeias where id = ?"
 
 	row := d.client.QueryRow(byIdSQL, id)
@@ -81,24 +78,29 @@ func (d ColmeiaRepositoryImplDb) ById(id string) (*domain.Colmeia, *errs.AppErro
 	err := row.Scan(&c.ID, &c.ColmeiaID, &c.QRCode, &c.Species, &c.StartingDate, &c.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errs.NewNotFoundError("Colmeia not found")
+			return &c, errs.NewNotFoundError("Colmeia not found")
 		} else {
 			log.Println("Error while scanning colmeia " + err.Error())
-			return nil, errs.NewDatabaseError("Unexpected database error")
+			return &c, errs.NewDatabaseError("Unexpected database error")
 		}
 	}
 
 	return &c, nil
 }
 
-func (d ColmeiaRepositoryImplDb) Create(colmeia domain.Colmeia) *errs.AppError {
+func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) *errs.AppError {
+	createSQL := "INSERT INTO colmeias (colmeia_id, qr_code, species_id, starting_date, status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
-	createSQL := "INSERT INTO colmeias (id, colmeia_id, qr_code, species_id, starting_date, status_id) VALUES (?, ?, ?, ?, ?, ?)"
-
-	_, err := d.client.Exec(createSQL, colmeia.ID, colmeia.ColmeiaID, colmeia.QRCode, colmeia.Species, colmeia.StartingDate, colmeia.Status)
+	_, err := d.client.Exec(createSQL,
+		colmeia.ColmeiaID,
+		colmeia.QRCode,
+		colmeia.Species,
+		colmeia.StartingDate,
+		colmeia.Status)
 	if err != nil {
 		log.Println("Error while creating colmeia: " + err.Error())
 		return errs.NewDatabaseError(err.Error())
 	}
+
 	return nil
 }

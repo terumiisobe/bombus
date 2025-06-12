@@ -14,7 +14,7 @@ import (
 // uses messageGenerator
 
 type ChatbotHandler struct {
-	s service.ChatbotService
+	chatbotService service.ChatbotService
 }
 
 func (wh *ChatbotHandler) handle(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,9 @@ func (wh *ChatbotHandler) handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("From: %s | Message: %s \n", from, body)
 
-	replyMessage := wh.s.GenerateMessage(from, body)
+	// TODO: uncomment and update GenerateMessage()
+	//replyMessage := wh.chatbotService.GenerateMessage(from, body)
+	replyMessage := ""
 	sendReply(from, replyMessage)
 }
 

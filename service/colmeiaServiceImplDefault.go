@@ -6,6 +6,10 @@ import (
 	"bombus/repository"
 )
 
+func NewColmeiaServiceImplDefault(repo repository.ColmeiaRepository) ColmeiaServiceImplDefault {
+	return ColmeiaServiceImplDefault{repo}
+}
+
 type ColmeiaServiceImplDefault struct {
 	repo repository.ColmeiaRepository
 }
