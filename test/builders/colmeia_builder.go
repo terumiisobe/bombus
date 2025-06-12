@@ -24,7 +24,7 @@ func NewColmeiaBuilder() *ColmeiaBuilder {
 }
 
 // WithID sets the ID
-func (b *ColmeiaBuilder) WithID(id uint64) *ColmeiaBuilder {
+func (b *ColmeiaBuilder) WithID(id int) *ColmeiaBuilder {
 	b.colmeia.ID = id
 	return b
 }

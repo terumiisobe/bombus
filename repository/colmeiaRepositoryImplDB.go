@@ -96,9 +96,7 @@ func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) *errs.AppError {
 		colmeia.QRCode,
 		colmeia.Species,
 		colmeia.StartingDate,
-		colmeia.Status,
-		colmeia.CreatedAt,
-		colmeia.UpdatedAt)
+		colmeia.Status)
 	if err != nil {
 		log.Println("Error while creating colmeia: " + err.Error())
 		return errs.NewDatabaseError(err.Error())

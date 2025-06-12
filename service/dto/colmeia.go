@@ -1,7 +1,7 @@
 package dto
 
 type Colmeia struct {
-	ID           *uint64 `json:"id"`
+	ID           *int    `json:"id"`
 	ColmeiaID    *int    `json:"colmeia_id"`
 	QRCode       *string `json:"qr_code"`
 	Species      *string `json:"species"`

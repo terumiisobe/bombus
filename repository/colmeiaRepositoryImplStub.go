@@ -14,9 +14,9 @@ type ColmeiaRepositoryImplStub struct {
 func NewColmeiaRepositoryImplStub() *ColmeiaRepositoryImplStub {
 	mockTime := time.Date(2025, time.April, 15, 10, 30, 0, 0, time.UTC)
 	colmeias := []domain.Colmeia{
-		{uint64(123), intPtr(123), nil, domain.TetragosniscaAngustula, mockTime, domain.Developing, mockTime, mockTime},
-		{uint64(456), intPtr(456), nil, domain.PlebeiaSp, mockTime, domain.Developing, mockTime, mockTime},
-		{uint64(789), intPtr(789), nil, domain.MeliponaQuadrifasciata, mockTime, domain.Developing, mockTime, mockTime},
+		{int(123), intPtr(123), nil, domain.TetragosniscaAngustula, mockTime, domain.Developing},
+		{int(456), intPtr(456), nil, domain.PlebeiaSp, mockTime, domain.Developing},
+		{int(789), intPtr(789), nil, domain.MeliponaQuadrifasciata, mockTime, domain.Developing},
 	}
 
 	return &ColmeiaRepositoryImplStub{colmeias}
@@ -36,7 +36,7 @@ func (s *ColmeiaRepositoryImplStub) FindAll(species, status string) ([]domain.Co
 
 func (s *ColmeiaRepositoryImplStub) ById(id string) (domain.Colmeia, *errs.AppError) {
 	var colmeia domain.Colmeia
-	colmeiaID, _ := strconv.ParseUint(id, 10, 64)
+	colmeiaID, _ := strconv.Atoi(id)
 	for _, colmeia := range s.colmeias {
 		if colmeia.ID == colmeiaID {
 			return colmeia, nil
