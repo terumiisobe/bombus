@@ -7,7 +7,7 @@ import (
 
 type ColmeiaService interface {
 	GetAllColmeia(string, string) ([]domain.Colmeia, *errs.AppError)
-	GetColmeia(string) (domain.Colmeia, *errs.AppError)
+	GetColmeia(string) (*domain.Colmeia, *errs.AppError)
 	CreateColmeia(domain.Colmeia) *errs.AppError
 	//CreateBatchColmeia(int, dto.Colmeia) *errs.AppError
 

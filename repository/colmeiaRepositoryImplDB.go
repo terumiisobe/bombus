@@ -69,7 +69,7 @@ func (d ColmeiaRepositoryImplDB) FindAll(status string, species string) ([]domai
 	return colmeias, nil
 }
 
-func (d ColmeiaRepositoryImplDB) ById(id string) (domain.Colmeia, *errs.AppError) {
+func (d ColmeiaRepositoryImplDB) ById(id string) (*domain.Colmeia, *errs.AppError) {
 	byIdSQL := "select * from colmeias where id = ?"
 
 	row := d.client.QueryRow(byIdSQL, id)
@@ -78,14 +78,14 @@ func (d ColmeiaRepositoryImplDB) ById(id string) (domain.Colmeia, *errs.AppError
 	err := row.Scan(&c.ID, &c.ColmeiaID, &c.QRCode, &c.Species, &c.StartingDate, &c.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return c, errs.NewNotFoundError("Colmeia not found")
+			return &c, errs.NewNotFoundError("Colmeia not found")
 		} else {
 			log.Println("Error while scanning colmeia " + err.Error())
-			return c, errs.NewDatabaseError("Unexpected database error")
+			return &c, errs.NewDatabaseError("Unexpected database error")
 		}
 	}
 
-	return c, nil
+	return &c, nil
 }
 
 func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) *errs.AppError {
