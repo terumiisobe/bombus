@@ -1,17 +1,8 @@
 package domain
 
-type interaction interface {
-	GenerateText(string) string
-}
-
 type Interaction struct {
-	typeName    InteractionType
-	defaultText string
-}
-
-type InteractionRepository interface {
-	GetTextByType(InteractionType) string
-	GenerateText(InteractionType, string) string
+	Type        InteractionType
+	DefaultText string
 }
 
 type InteractionType int

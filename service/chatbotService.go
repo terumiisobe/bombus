@@ -3,6 +3,7 @@ package service
 import (
 	"bombus/domain"
 	"bombus/errs"
+	"bombus/repository"
 	"fmt"
 	"log"
 	"strconv"
@@ -16,12 +17,12 @@ type ChatbotService interface{}
 type ChatbotServiceImpl struct {
 	userInteractionStateMap map[string]domain.InteractionType
 	stateLock               *sync.Mutex
-	interactionRepo         domain.InteractionRepository
+	interactionRepo         repository.InteractionRepository
 
 	colmeiaService ColmeiaService
 }
 
-func NewChatbotService(interactionRepo domain.InteractionRepository, cs ColmeiaService) ChatbotServiceImpl {
+func NewChatbotService(interactionRepo repository.InteractionRepository, cs ColmeiaService) ChatbotServiceImpl {
 	return ChatbotServiceImpl{
 		userInteractionStateMap: make(map[string]domain.InteractionType),
 		stateLock:               new(sync.Mutex),
@@ -30,7 +31,7 @@ func NewChatbotService(interactionRepo domain.InteractionRepository, cs ColmeiaS
 	}
 }
 
-func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImpl {
+func NewChatbotServiceCustomMap(r repository.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImpl {
 	return ChatbotServiceImpl{
 		userInteractionStateMap: m,
 		stateLock:               new(sync.Mutex),

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"bombus/config"
-	"bombus/domain"
 	"bombus/repository"
 	"bombus/service"
 
@@ -30,7 +29,7 @@ func Start() {
 	// TODO: replace to actual and not stubs
 	colmeiaService := service.NewColmeiaServiceImplDefault(repository.NewColmeiaRepositoryImplStub())
 	colmeiaHandler := ColmeiaHandler{colmeiaService}
-	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
+	chatbotHandler := ChatbotHandler{service.NewChatbotService(repository.NewInteractionRepositoryStub(), colmeiaService)}
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)
