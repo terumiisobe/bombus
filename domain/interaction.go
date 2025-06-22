@@ -5,18 +5,6 @@ type Interaction struct {
 	DefaultText string
 }
 
-type InteractionType int
-
-const (
-	Init InteractionType = iota
-	MainMenu
-	ListColmeias
-	AddColmeiaForm
-	AddBatchColmeiaForm
-	Success
-	Fail
-)
-
 func (i InteractionType) String() string {
 	switch i {
 	case Init:
