@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"bombus/domain"
+	"bombus/errs"
 )
 
 type InteractionRepositoryStub struct {
@@ -12,13 +13,27 @@ type InteractionRepositoryStub struct {
 
 func NewInteractionRepositoryStub() InteractionRepositoryStub {
 	interactions := []domain.Interaction{
-		{domain.Init, ""},
-		{domain.MainMenu, "Menu with the options: 1, 2, 3"},
-		{domain.ListColmeias, "Colmeias list"},
-		{domain.AddColmeiaForm, "Add Colmeia Form"},
-		{domain.AddBatchColmeiaForm, "Add Batch Colmeia Form"},
-		{domain.Success, "Success message"},
-		{domain.Fail, "Fail message, error is: %s"},
+		{domain.Init, "", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.MainMenu, "Menu with the options: 1, 2, 3", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.ListColmeias, "Colmeias list", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.AddColmeiaForm, "Add Colmeia Form", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.AddBatchColmeiaForm, "Add Batch Colmeia Form", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.Success, "Success message", func(in string) *errs.AppError {
+			return nil
+		}},
+		{domain.Fail, "Fail message, error is: %s", func(in string) *errs.AppError {
+			return nil
+		}},
 	}
 
 	return InteractionRepositoryStub{interactions}
