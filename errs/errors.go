@@ -46,3 +46,17 @@ func NewDatabaseError(message string) *AppError {
 		Message: fmt.Sprintf("Database error: %s", message),
 	}
 }
+
+func NewJsonConversionError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusInternalServerError,
+		Message: fmt.Sprintf("JSON conversion error: %s", message),
+	}
+}
+
+func NewExternalAPIRequestError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusInternalServerError,
+		Message: fmt.Sprintf("External API request error: %s", message),
+	}
+}
