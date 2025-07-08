@@ -37,6 +37,10 @@ func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]dom
 	}
 }
 
+func (cs ChatbotServiceImplDefault) GenerateReplyMessage(user, input string) string {
+	return ""
+}
+
 func (cs ChatbotServiceImplDefault) processInteractionAndGenerateResponse(user, input string) string {
 	userCurrentInteractionState := cs.userInteractionStateMap[user]
 

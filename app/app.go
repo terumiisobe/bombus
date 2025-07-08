@@ -30,6 +30,7 @@ func Start() {
 	// TODO: replace to actual and not stubs
 	colmeiaService := service.NewColmeiaServiceImplDefault(repository.NewColmeiaRepositoryImplStub())
 	colmeiaHandler := ColmeiaHandler{colmeiaService}
+	//TODO: replace to chatbot AI
 	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
 
 	// define routes
