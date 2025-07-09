@@ -47,4 +47,3 @@ func GetColmeiaFunctionSchemas() []map[string]interface{} {
 		},
 	}
 }
-ackage openai
