@@ -1,49 +1,68 @@
 package openai
 
-func GetColmeiaFunctionSchemas() []map[string]interface{} {
-	return []map[string]interface{}{
-		{
-			"name":        "list_colmeia",
-			"description": "List all bee hives",
-			"parameters": map[string]interface{}{
+import "github.com/openai/openai-go"
+
+func GetAllTools() []openai.ChatCompletionToolParam {
+	return []openai.ChatCompletionToolParam{
+		GetColmeiaListToolParams(),
+		GetColmeiaAddToolParams(),
+	}
+}
+
+func GetColmeiaListToolParams() openai.ChatCompletionToolParam {
+	return openai.ChatCompletionToolParam{
+		Function: openai.FunctionDefinitionParam{
+			Name:        "list_colmeia",
+			Description: openai.String("List bee hives, in case of doubt, return all bee hives."),
+			Parameters: openai.FunctionParameters{
 				"type": "object",
 				"properties": map[string]interface{}{
 					"status": map[string]interface{}{
-						"type":        "string",
-						"description": "Status of bee hive",
+						"type": "string",
+						//TODO: add enum
+						"description": "Status of bee hive (optional)",
 					},
 					"species": map[string]interface{}{
-						"type":        "string",
-						"description": "Species of bee hive",
+						"type": "string",
+						//TODO: add enum
+						"description": "Species of bee hive (optional)",
 					},
 				},
+				"required": []string{},
 			},
 		},
-		{
-			"name":        "add_colmeia",
-			"description": "Add a new bee hive",
-			"parameters": map[string]interface{}{
+	}
+}
+
+func GetColmeiaAddToolParams() openai.ChatCompletionToolParam {
+	return openai.ChatCompletionToolParam{
+		Function: openai.FunctionDefinitionParam{
+			Name:        "add_colmeia",
+			Description: openai.String("Add a new bee hive"),
+			Parameters: openai.FunctionParameters{
 				"type": "object",
 				"properties": map[string]interface{}{
 					"colmeia_id": map[string]interface{}{
-						"type":        "int",
-						"description": "ID of bee hive",
+						"type":        "integer",
+						"description": "ID of bee hive (optional)",
 					},
 					"species": map[string]interface{}{
-						"type":        "string",
-						"description": "Species of bee hive",
+						"type": "string",
+						//TODO: add enum
+						"description": "Species of bee hive (required)",
 					},
 					"starting_date": map[string]interface{}{
 						"type":        "string",
-						"description": "Starting date of bee hive",
+						"description": "Starting date of bee hive (optional)",
 					},
 					"status": map[string]interface{}{
-						"type":        "string",
-						"description": "Status of bee hive",
+						"type": "string",
+						//TODO: add enum
+						"description": "Status of bee hive (optional)",
 					},
 				},
+				"required": []string{"species"},
 			},
-			"required": []string{"species"},
 		},
 	}
 }
