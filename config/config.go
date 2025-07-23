@@ -2,16 +2,6 @@ package config
 
 import "os"
 
-// ConfigProvider defines the interface for configuration
-type ConfigProvider interface {
-	GetOpenAIAPIKey() string
-	GetTwilioAccountSID() string
-	GetTwilioAuthToken() string
-	GetTwilioSenderNumber() string
-	GetDBUser() string
-	GetDBPass() string
-}
-
 type Config struct {
 	AccountSID   string
 	AuthToken    string
