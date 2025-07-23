@@ -1,6 +1,10 @@
 package openai
 
-import "github.com/openai/openai-go"
+import (
+	"bombus/domain"
+
+	"github.com/openai/openai-go"
+)
 
 func GetAllTools() []openai.ChatCompletionToolParam {
 	return []openai.ChatCompletionToolParam{
@@ -18,13 +22,13 @@ func GetColmeiaListToolParams() openai.ChatCompletionToolParam {
 				"type": "object",
 				"properties": map[string]interface{}{
 					"status": map[string]interface{}{
-						"type": "string",
-						//TODO: add enum
+						"type":        "string",
+						"enum":        domain.GetAllStatus(),
 						"description": "Status of bee hive (optional)",
 					},
 					"species": map[string]interface{}{
-						"type": "string",
-						//TODO: add enum
+						"type":        "string",
+						"enum":        domain.GetAllSpecies(),
 						"description": "Species of bee hive (optional)",
 					},
 				},
@@ -47,8 +51,8 @@ func GetColmeiaAddToolParams() openai.ChatCompletionToolParam {
 						"description": "ID of bee hive (optional)",
 					},
 					"species": map[string]interface{}{
-						"type": "string",
-						//TODO: add enum
+						"type":        "string",
+						"enum":        domain.GetAllSpecies(),
 						"description": "Species of bee hive (required)",
 					},
 					"starting_date": map[string]interface{}{
@@ -56,8 +60,8 @@ func GetColmeiaAddToolParams() openai.ChatCompletionToolParam {
 						"description": "Starting date of bee hive (optional)",
 					},
 					"status": map[string]interface{}{
-						"type": "string",
-						//TODO: add enum
+						"type":        "string",
+						"enum":        domain.GetAllStatus(),
 						"description": "Status of bee hive (optional)",
 					},
 				},
