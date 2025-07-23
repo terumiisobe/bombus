@@ -9,18 +9,21 @@ import (
 
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
+	"github.com/openai/openai-go/shared"
 )
 
 type OpenAIParser struct {
 	client openai.Client
+	model  shared.ChatModel
 }
 
 // NewOpenAIParser creates a new OpenAIParser instance
-func NewOpenAIParser(apiKey string) *OpenAIParser {
+func NewOpenAIParser(apiKey string, model shared.ChatModel) *OpenAIParser {
 	client := openai.NewClient(option.WithAPIKey(apiKey))
 
 	return &OpenAIParser{
 		client: client,
+		model:  model,
 	}
 }
 
@@ -45,7 +48,7 @@ func (o *OpenAIParser) Parse(ctx context.Context, message string) (*chatbot.Acti
 }
 
 func (o *OpenAIParser) sendRequest(ctx context.Context, message string) (*openai.ChatCompletion, *errs.AppError) {
-	resp, err := o.client.Chat.Completions.New(ctx, createParams(message))
+	resp, err := o.client.Chat.Completions.New(ctx, createParams(o.model, message))
 	if err != nil {
 		return nil, errs.NewExternalAPIRequestError(fmt.Sprintf("[OpenAI] %s", err.Error()))
 	}
@@ -86,7 +89,7 @@ func getToolCallFromResponse(response *openai.ChatCompletion) (*openai.ChatCompl
 	return &toolCalls[0], nil
 }
 
-func createParams(message string) openai.ChatCompletionNewParams {
+func createParams(model shared.ChatModel, message string) openai.ChatCompletionNewParams {
 
 	messages := []openai.ChatCompletionMessageParamUnion{
 		//openai.DeveloperMessage("You are a bee hive management system assistant, always answer in brazilian portuguese and be friendly, but keep answers short."),
@@ -97,7 +100,7 @@ func createParams(message string) openai.ChatCompletionNewParams {
 
 	return openai.ChatCompletionNewParams{
 		Messages: messages,
-		Model:    openai.ChatModelGPT4o,
+		Model:    model,
 		Tools:    tools,
 	}
 }
