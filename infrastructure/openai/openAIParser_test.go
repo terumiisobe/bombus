@@ -4,32 +4,36 @@ import (
 	"bombus/domain/chatbot"
 	"context"
 	"testing"
+
+	"github.com/openai/openai-go/shared"
 )
 
 func TestOpenAIParser_Parse(t *testing.T) {
 
-	model := "gpt-4o-mini"
-	// deprecatedModel := "gpt-3.5-turbo-0613"
+	model := shared.ChatModelGPT4oMini
+	deprecatedModel := shared.ChatModelGPT3_5Turbo16k
 
-	APIKey := "my-key"
+	// Get API key using helper function
+	APIKey := getTestAPIKey(t)
+
 	incorrectAPIKey := "incorrect-key"
 
 	ctx := context.Background()
 
-	// t.Run("use deprecated model, should return external API request error", func(t *testing.T) {
-	// 	parser := NewOpenAIParser(APIKey, deprecatedModel)
+	t.Run("use deprecated model, should return external API request error", func(t *testing.T) {
+		parser := NewOpenAIParser(APIKey, deprecatedModel)
 
-	// 	message := "some message"
+		message := "some message"
 
-	// 	action, err := parser.Parse(ctx, message)
+		action, err := parser.Parse(ctx, message)
 
-	// 	if err == nil {
-	// 		t.Errorf("expected an error, got nil")
-	// 	}
-	// 	if action != nil {
-	// 		t.Errorf("expected action to be nil, got %+v", action)
-	// 	}
-	// })
+		if err == nil {
+			t.Errorf("expected an error, got nil")
+		}
+		if action != nil {
+			t.Errorf("expected action to be nil, got %+v", action)
+		}
+	})
 
 	t.Run("use incorrect api key, should return external API request error", func(t *testing.T) {
 		parser := NewOpenAIParser(incorrectAPIKey, model)
@@ -69,13 +73,13 @@ func TestOpenAIParser_Parse(t *testing.T) {
 	t.Run("test list-like message with status filter, should return list_colmeia action", func(t *testing.T) {
 		parser := NewOpenAIParser(APIKey, model)
 
-		message := "listar colmeias com status 'ativa'"
+		message := "listar colmeias com status 'em desenvolvimento'"
 
 		action, err := parser.Parse(ctx, message)
 
 		expAction := chatbot.Action{
 			Name:   chatbot.ListColmeia,
-			Params: map[string]string{"status": "ativa"},
+			Params: map[string]string{"status": "em desenvolvimento"},
 		}
 
 		if err != nil {
@@ -92,13 +96,13 @@ func TestOpenAIParser_Parse(t *testing.T) {
 	t.Run("test list-like message with status and species filter, should return list_colmeia action", func(t *testing.T) {
 		parser := NewOpenAIParser(APIKey, model)
 
-		message := "listar colmeias com status 'ativa' e espécie 'jatai'"
+		message := "listar colmeias com status 'com mel' e espécie 'melipona bicolor'"
 
 		action, err := parser.Parse(ctx, message)
 
 		expAction := chatbot.Action{
 			Name:   chatbot.ListColmeia,
-			Params: map[string]string{"status": "ativa", "species": "jatai"},
+			Params: map[string]string{"status": "com mel", "species": "Melipona Bicolor"},
 		}
 
 		if err != nil {
