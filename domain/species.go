@@ -58,3 +58,13 @@ func ParseSpecies(s string) (Species, error) {
 		return Species(0), fmt.Errorf("invalid species: %s", s)
 	}
 }
+func GetAllSpecies() []string {
+	return []string{
+		TetragosniscaAngustula.String(),
+		PlebeiaSp.String(),
+		MeliponaQuadrifasciata.String(),
+		MeliponaBicolor.String(),
+		ScaptotrigonaBipunctata.String(),
+		ScaptotrigonaDepilis.String(),
+	}
+}

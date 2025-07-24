@@ -56,3 +56,12 @@ func ParseStatus(s string) (Status, error) {
 		return Status(0), fmt.Errorf("invalid status: %s", s)
 	}
 }
+func GetAllStatus() []string {
+	return []string{
+		HoneyReady.String(),
+		Induzida.String(),
+		MelgueiraReady.String(),
+		Developing.String(),
+		Empty.String(),
+	}
+}
