@@ -11,14 +11,13 @@ type InteractionRepositoryStub struct {
 
 func NewInteractionRepositoryStub() InteractionRepositoryStub {
 	interactions := []chatbot.Interaction{
-		{chatbot.Init, ""},
-		{chatbot.MainMenu, "Olá meliponicultor! O que deseja fazer?"},
-		{chatbot.ListColmeias, "Esta é a sua listagem {com parâmetros x, y}. {lista}"},
-		{chatbot.AddColmeiaForm, "Para adicionar uma colmeia, forneça as seguintes informações: número (opcional), espécie, status."},
-		{chatbot.AddColmeiaValidation, " Uma nova colmeia será adicionada com as seguintes informações:{informações da colmeia}. Confirma?"},
-		{chatbot.AddBatchColmeiaForm, "Add Batch Colmeia Form"},
-		{chatbot.AddSuccess, "Colmeia criada com sucesso!"},
-		{chatbot.AddFail, "Algumas informações não estão de acordo: {informações erradas/faltantes}."},
+		chatbot.CreateMainMenuInteraction(),
+		chatbot.CreateListColmeiasInteraction(),
+		chatbot.CreateAddColmeiaInteraction(),
+		chatbot.CreateAddColmeiaValidationInteraction(),
+		chatbot.CreateAddBatchColmeiaInteraction(),
+		chatbot.CreateAddColmeiaSuccessInteraction(),
+		chatbot.CreateAddColmeiaFailInteraction(),
 	}
 
 	return InteractionRepositoryStub{interactions}
@@ -26,7 +25,7 @@ func NewInteractionRepositoryStub() InteractionRepositoryStub {
 
 func (s InteractionRepositoryStub) GetTextByType(t chatbot.InteractionType) string {
 	for _, interaction := range s.interactions {
-		if interaction.TypeName == t {
+		if interaction.Name == t {
 			return interaction.DefaultText
 		}
 	}
@@ -35,10 +34,10 @@ func (s InteractionRepositoryStub) GetTextByType(t chatbot.InteractionType) stri
 
 func (s InteractionRepositoryStub) GenerateText(t chatbot.InteractionType, additionalInfo string) string {
 	for _, interaction := range s.interactions {
-		if interaction.TypeName == chatbot.AddFail {
+		if interaction.Name == chatbot.AddColmeiaFail {
 			return fmt.Sprintf(interaction.DefaultText, additionalInfo)
 		}
-		if interaction.TypeName == t {
+		if interaction.Name == t {
 			return interaction.DefaultText
 		}
 	}

@@ -59,7 +59,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  chatbot.MainMenu,
 			secondInput: "3",
 			want: want{
-				result: chatbot.AddBatchColmeiaForm,
+				result: chatbot.AddBatchColmeia,
 				err:    nil,
 			},
 		},
@@ -86,7 +86,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  chatbot.AddColmeiaForm,
 			secondInput: validTextAddColmeiaForm,
 			want: want{
-				result: chatbot.AddSuccess,
+				result: chatbot.AddColmeiaSuccess,
 				err:    nil,
 			},
 		},
@@ -95,25 +95,25 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  chatbot.AddColmeiaForm,
 			secondInput: anyText,
 			want: want{
-				result: chatbot.AddFail,
+				result: chatbot.AddColmeiaFail,
 				err:    errs.NewValidationError("Número incorreto de linhas."),
 			},
 		},
 		{
 			name:        "Current: AddBatchColmeiaForm | Input:  valid text | Should return: Success",
-			firstInput:  chatbot.AddBatchColmeiaForm,
+			firstInput:  chatbot.AddBatchColmeia,
 			secondInput: validTextAddBatchColmeiaForm,
 			want: want{
-				result: chatbot.AddSuccess,
+				result: chatbot.AddColmeiaSuccess,
 				err:    nil,
 			},
 		},
 		{
 			name:        "Current: AddBatchColmeiaForm | Input:  invalid text | Should return: Fail",
-			firstInput:  chatbot.AddBatchColmeiaForm,
+			firstInput:  chatbot.AddBatchColmeia,
 			secondInput: anyText,
 			want: want{
-				result: chatbot.AddFail,
+				result: chatbot.AddColmeiaFail,
 				err:    errs.NewValidationError("Número incorreto de linhas."),
 			},
 		},
@@ -193,14 +193,14 @@ func TestChatbotService_ValidateInput(t *testing.T) {
 		}
 	})
 	t.Run("Current: AddColmeiaBatchForm | Input: invalid, should return error", func(t *testing.T) {
-		got := service.ValidateInput(chatbot.AddBatchColmeiaForm, invalidInput)
+		got := service.ValidateInput(chatbot.AddBatchColmeia, invalidInput)
 
 		if got == nil {
 			t.Errorf("got %q want error", got)
 		}
 	})
 	t.Run("Current: AddColmeiaBatchForm | Input: valid, should return nil", func(t *testing.T) {
-		got := service.ValidateInput(chatbot.AddBatchColmeiaForm, validAddBatchColmeiaFormValues)
+		got := service.ValidateInput(chatbot.AddBatchColmeia, validAddBatchColmeiaFormValues)
 		var want *errs.AppError = nil
 
 		if !reflect.DeepEqual(got, want) {
@@ -390,7 +390,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Número incorreto de linhas.")
 
 		if !reflect.DeepEqual(got, want) {
@@ -408,7 +408,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			wrongValue,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Número incorreto de linhas.")
 
 		if !reflect.DeepEqual(got, want) {
@@ -424,7 +424,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			wrongValue,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value, this is a wrong value, this is a wrong value, this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -440,7 +440,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -456,7 +456,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -472,7 +472,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -487,7 +487,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			wrongValue,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -503,7 +503,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		if got != nil {
 			t.Errorf("ValidateForm() = %v, want nil", got)
 		}
@@ -518,7 +518,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			wrongValue,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value, this is a wrong value, this is a wrong value, this is a wrong value, this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -535,7 +535,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (this is a wrong value).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -552,7 +552,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			wrongEnumValue,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		want := errs.NewValidationError("Dados inválidos (1000, 1000).")
 
 		if !reflect.DeepEqual(got, want) {
@@ -569,7 +569,7 @@ func TestChatbotService_ValidateForm(t *testing.T) {
 			status,
 		}
 
-		got := service.ValidateForm(chatbot.AddBatchColmeiaForm, formValues)
+		got := service.ValidateForm(chatbot.AddBatchColmeia, formValues)
 		if got != nil {
 			t.Errorf("ValidateForm() = %v, want nil", got)
 		}

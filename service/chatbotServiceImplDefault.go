@@ -68,16 +68,16 @@ func GetNextInteraction(state chatbot.InteractionType, input string) (chatbot.In
 		return chatbot.AddColmeiaForm, nil
 	}
 	if state == chatbot.MainMenu && input == "3" {
-		return chatbot.AddBatchColmeiaForm, nil
+		return chatbot.AddBatchColmeia, nil
 	}
 	if state == chatbot.ListColmeias {
 		return chatbot.Init, nil
 	}
-	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeiaForm {
+	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeia {
 		if err != nil {
-			return chatbot.AddFail, err
+			return chatbot.AddColmeiaFail, err
 		}
-		return chatbot.AddSuccess, nil
+		return chatbot.AddColmeiaSuccess, nil
 	}
 
 	return chatbot.MainMenu, err
@@ -96,7 +96,7 @@ func (cs ChatbotServiceImplDefault) executeAction(state chatbot.InteractionType,
 		// TODO: call create colmeia
 		return "", nil
 	}
-	if state == chatbot.AddBatchColmeiaForm {
+	if state == chatbot.AddBatchColmeia {
 		// TODO: call create batch colmeia
 		return "", nil
 	}
@@ -121,16 +121,16 @@ func (cs ChatbotServiceImplDefault) GenerateMessage(state chatbot.InteractionTyp
 	if state == chatbot.AddColmeiaForm {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(chatbot.AddFail, err.Message)
+			return cs.interactionRepo.GenerateText(chatbot.AddColmeiaFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(chatbot.AddSuccess)
+		return cs.interactionRepo.GetTextByType(chatbot.AddColmeiaSuccess)
 	}
-	if state == chatbot.AddBatchColmeiaForm {
+	if state == chatbot.AddBatchColmeia {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(chatbot.AddFail, err.Message)
+			return cs.interactionRepo.GenerateText(chatbot.AddColmeiaFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(chatbot.AddSuccess)
+		return cs.interactionRepo.GetTextByType(chatbot.AddColmeiaSuccess)
 	}
 	if state == chatbot.ListColmeias {
 		return cs.interactionRepo.GetTextByType(chatbot.MainMenu)
@@ -142,7 +142,7 @@ func (cs ChatbotServiceImplDefault) GenerateMessage(state chatbot.InteractionTyp
 		return cs.interactionRepo.GetTextByType(chatbot.AddColmeiaForm)
 	}
 	if input == "3" {
-		return cs.interactionRepo.GetTextByType(chatbot.AddBatchColmeiaForm)
+		return cs.interactionRepo.GetTextByType(chatbot.AddBatchColmeia)
 	}
 	return cs.interactionRepo.GetTextByType(chatbot.MainMenu)
 }
@@ -152,7 +152,7 @@ func ValidateInput(state chatbot.InteractionType, input string) *errs.AppError {
 	if state == chatbot.MainMenu && !containsString(valid, input) {
 		return errs.NewValidationError("Opção inválida.")
 	}
-	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeiaForm {
+	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeia {
 		formValues := convertToFormValues(input)
 		return ValidateForm(state, formValues)
 	}
@@ -166,7 +166,7 @@ func ValidateForm(formType chatbot.InteractionType, formValues []string) *errs.A
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
-	if formType == chatbot.AddBatchColmeiaForm && !containsInt(addBatchColmeiaFormSizes, len(formValues)) {
+	if formType == chatbot.AddBatchColmeia && !containsInt(addBatchColmeiaFormSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
@@ -200,7 +200,7 @@ func getValidationsPerFormValue(interactiontype chatbot.InteractionType, formSiz
 		validationPerFormValue[2] = isValidStartingDate
 		validationPerFormValue[3] = isValidStatus
 	}
-	if formSize == 4 && interactiontype == chatbot.AddBatchColmeiaForm {
+	if formSize == 4 && interactiontype == chatbot.AddBatchColmeia {
 		validationPerFormValue[0] = isValidQuantity
 		validationPerFormValue[1] = isValidSpecies
 		validationPerFormValue[2] = isValidStartingDate
