@@ -1,17 +1,8 @@
 package domain
 
-type interaction interface {
-	GenerateText(string) string
-}
-
 type Interaction struct {
-	typeName    InteractionType
-	defaultText string
-}
-
-type InteractionRepository interface {
-	GetTextByType(InteractionType) string
-	GenerateText(InteractionType, string) string
+	TypeName    InteractionType
+	DefaultText string
 }
 
 type InteractionType int
@@ -21,9 +12,10 @@ const (
 	MainMenu
 	ListColmeias
 	AddColmeiaForm
+	AddColmeiaValidation
 	AddBatchColmeiaForm
-	Success
-	Fail
+	AddSuccess
+	AddFail
 )
 
 func (i InteractionType) String() string {
@@ -36,11 +28,13 @@ func (i InteractionType) String() string {
 		return "ListColmeias"
 	case AddColmeiaForm:
 		return "AddColmeiaForm"
+	case AddColmeiaValidation:
+		return "AddColmeiaValidation"
 	case AddBatchColmeiaForm:
 		return "AddBatchColmeiaForm"
-	case Success:
+	case AddSuccess:
 		return "Success"
-	case Fail:
+	case AddFail:
 		return "Fail"
 	default:
 		return "Unknown"

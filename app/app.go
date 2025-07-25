@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"bombus/config"
-	"bombus/domain"
 	"bombus/repository"
 	"bombus/service"
 
@@ -31,7 +30,7 @@ func Start() {
 	colmeiaService := service.NewColmeiaServiceImplDefault(repository.NewColmeiaRepositoryImplStub())
 	colmeiaHandler := ColmeiaHandler{colmeiaService}
 	//TODO: replace to chatbot AI
-	chatbotHandler := ChatbotHandler{service.NewChatbotService(domain.NewInteractionRepositoryStub(), colmeiaService)}
+	chatbotHandler := ChatbotHandler{service.NewChatbotService(repository.NewInteractionRepositoryStub(), colmeiaService)}
 
 	// define routes
 	router.HandleFunc("/colmeias", colmeiaHandler.getAllColmeias).Methods(http.MethodGet)

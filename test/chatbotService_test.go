@@ -86,7 +86,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  domain.AddColmeiaForm,
 			secondInput: validTextAddColmeiaForm,
 			want: want{
-				result: domain.Success,
+				result: domain.AddSuccess,
 				err:    nil,
 			},
 		},
@@ -95,7 +95,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  domain.AddColmeiaForm,
 			secondInput: anyText,
 			want: want{
-				result: domain.Fail,
+				result: domain.AddFail,
 				err:    errs.NewValidationError("Número incorreto de linhas."),
 			},
 		},
@@ -104,7 +104,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  domain.AddBatchColmeiaForm,
 			secondInput: validTextAddBatchColmeiaForm,
 			want: want{
-				result: domain.Success,
+				result: domain.AddSuccess,
 				err:    nil,
 			},
 		},
@@ -113,7 +113,7 @@ func TestChatbotService_GetNextInteraction(t *testing.T) {
 			firstInput:  domain.AddBatchColmeiaForm,
 			secondInput: anyText,
 			want: want{
-				result: domain.Fail,
+				result: domain.AddFail,
 				err:    errs.NewValidationError("Número incorreto de linhas."),
 			},
 		},

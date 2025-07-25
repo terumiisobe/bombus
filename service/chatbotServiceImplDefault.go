@@ -3,6 +3,7 @@ package service
 import (
 	"bombus/domain"
 	"bombus/errs"
+	"bombus/repository"
 	"fmt"
 	"log"
 	"strconv"
@@ -14,12 +15,12 @@ import (
 type ChatbotServiceImplDefault struct {
 	userInteractionStateMap map[string]domain.InteractionType
 	stateLock               *sync.Mutex
-	interactionRepo         domain.InteractionRepository
+	interactionRepo         repository.InteractionRepository
 
 	colmeiaService ColmeiaService
 }
 
-func NewChatbotService(interactionRepo domain.InteractionRepository, cs ColmeiaService) ChatbotServiceImplDefault {
+func NewChatbotService(interactionRepo repository.InteractionRepository, cs ColmeiaService) ChatbotServiceImplDefault {
 	return ChatbotServiceImplDefault{
 		userInteractionStateMap: make(map[string]domain.InteractionType),
 		stateLock:               new(sync.Mutex),
@@ -28,7 +29,7 @@ func NewChatbotService(interactionRepo domain.InteractionRepository, cs ColmeiaS
 	}
 }
 
-func NewChatbotServiceCustomMap(r domain.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImplDefault {
+func NewChatbotServiceCustomMap(r repository.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImplDefault {
 	return ChatbotServiceImplDefault{
 		userInteractionStateMap: m,
 		stateLock:               new(sync.Mutex),
@@ -73,9 +74,9 @@ func GetNextInteraction(state domain.InteractionType, input string) (domain.Inte
 	}
 	if state == domain.AddColmeiaForm || state == domain.AddBatchColmeiaForm {
 		if err != nil {
-			return domain.Fail, err
+			return domain.AddFail, err
 		}
-		return domain.Success, nil
+		return domain.AddSuccess, nil
 	}
 
 	return domain.MainMenu, err
@@ -119,16 +120,16 @@ func (cs ChatbotServiceImplDefault) GenerateMessage(state domain.InteractionType
 	if state == domain.AddColmeiaForm {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+			return cs.interactionRepo.GenerateText(domain.AddFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(domain.Success)
+		return cs.interactionRepo.GetTextByType(domain.AddSuccess)
 	}
 	if state == domain.AddBatchColmeiaForm {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.Fail, err.Message)
+			return cs.interactionRepo.GenerateText(domain.AddFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(domain.Success)
+		return cs.interactionRepo.GetTextByType(domain.AddSuccess)
 	}
 	if state == domain.ListColmeias {
 		return cs.interactionRepo.GetTextByType(domain.MainMenu)
