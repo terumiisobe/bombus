@@ -2,21 +2,38 @@ package openai
 
 import (
 	"bombus/domain"
+	"bombus/domain/chatbot"
+	"fmt"
+	"slices"
 
 	"github.com/openai/openai-go"
 )
 
-func GetAllTools() []openai.ChatCompletionToolParam {
-	return []openai.ChatCompletionToolParam{
-		GetColmeiaListToolParams(),
-		GetColmeiaAddToolParams(),
+var (
+	colmeiaListToolName          = chatbot.ListColmeias.String()
+	colmeiaAddToolName           = chatbot.AddColmeiaForm.String()
+	colmeiaAddValidationToolName = chatbot.AddColmeiaValidation.String()
+)
+
+func GetTools(options []string) []openai.ChatCompletionToolParam {
+	tools := []openai.ChatCompletionToolParam{}
+	if slices.Contains(options, colmeiaListToolName) {
+		tools = append(tools, GetColmeiaListToolParams())
 	}
+	if slices.Contains(options, colmeiaAddToolName) {
+		tools = append(tools, GetColmeiaAddToolParams())
+	}
+	if slices.Contains(options, colmeiaAddValidationToolName) {
+		tools = append(tools, GetColmeiaAddValidationToolParams())
+	}
+	fmt.Println(tools)
+	return tools
 }
 
 func GetColmeiaListToolParams() openai.ChatCompletionToolParam {
 	return openai.ChatCompletionToolParam{
 		Function: openai.FunctionDefinitionParam{
-			Name:        "list_colmeia",
+			Name:        colmeiaListToolName,
 			Description: openai.String("List bee hives, in case of doubt, return all bee hives."),
 			Parameters: openai.FunctionParameters{
 				"type": "object",
@@ -41,8 +58,17 @@ func GetColmeiaListToolParams() openai.ChatCompletionToolParam {
 func GetColmeiaAddToolParams() openai.ChatCompletionToolParam {
 	return openai.ChatCompletionToolParam{
 		Function: openai.FunctionDefinitionParam{
-			Name:        "add_colmeia",
+			Name:        colmeiaAddToolName,
 			Description: openai.String("Add a new bee hive"),
+		},
+	}
+}
+
+func GetColmeiaAddValidationToolParams() openai.ChatCompletionToolParam {
+	return openai.ChatCompletionToolParam{
+		Function: openai.FunctionDefinitionParam{
+			Name:        colmeiaAddValidationToolName,
+			Description: openai.String("Validate the parameters of a new bee hive"),
 			Parameters: openai.FunctionParameters{
 				"type": "object",
 				"properties": map[string]interface{}{

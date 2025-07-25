@@ -1,7 +1,6 @@
 package openai
 
 import (
-	"bombus/domain/chatbot"
 	"bombus/errs"
 	"context"
 	"encoding/json"
@@ -27,41 +26,42 @@ func NewOpenAIParser(apiKey string, model shared.ChatModel) *OpenAIParser {
 	}
 }
 
-func (o *OpenAIParser) Parse(ctx context.Context, message string) (*chatbot.Action, *errs.AppError) {
+func (o *OpenAIParser) Parse(ctx context.Context, options []string, message string) (string, map[string]string, *errs.AppError) {
 
-	resp, err := o.sendRequest(ctx, message)
+	params := createParams(o.model, options, message)
+	resp, err := o.sendRequest(ctx, params)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	toolCall, err := getToolCallFromResponse(resp)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
-	action, err := convertToolCallToAction(toolCall)
+	actionName, actionParams, err := convertToolCallToAction(toolCall)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
-	return action, nil
+	return actionName, actionParams, nil
 }
 
-func (o *OpenAIParser) sendRequest(ctx context.Context, message string) (*openai.ChatCompletion, *errs.AppError) {
-	resp, err := o.client.Chat.Completions.New(ctx, createParams(o.model, message))
+func (o *OpenAIParser) sendRequest(ctx context.Context, params openai.ChatCompletionNewParams) (*openai.ChatCompletion, *errs.AppError) {
+	resp, err := o.client.Chat.Completions.New(ctx, params)
 	if err != nil {
 		return nil, errs.NewExternalAPIRequestError(fmt.Sprintf("[OpenAI] %s", err.Error()))
 	}
 	return resp, nil
 }
 
-func convertToolCallToAction(toolCall *openai.ChatCompletionMessageToolCall) (*chatbot.Action, *errs.AppError) {
+func convertToolCallToAction(toolCall *openai.ChatCompletionMessageToolCall) (string, map[string]string, *errs.AppError) {
 	params := make(map[string]string)
 	if toolCall.Function.Arguments != "" {
 		// Parse the arguments JSON string into a map
 		argsMap := make(map[string]interface{})
 		if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &argsMap); err != nil {
-			return nil, errs.NewJsonConversionError(fmt.Sprintf("failed to parse function arguments: %s", err.Error()))
+			return "", nil, errs.NewJsonConversionError(fmt.Sprintf("failed to parse function arguments: %s", err.Error()))
 		}
 
 		// Convert interface{} values to strings
@@ -75,10 +75,7 @@ func convertToolCallToAction(toolCall *openai.ChatCompletionMessageToolCall) (*c
 		}
 	}
 
-	return &chatbot.Action{
-		Name:   chatbot.ActionName(toolCall.Function.Name),
-		Params: params,
-	}, nil
+	return toolCall.Function.Name, params, nil
 }
 
 func getToolCallFromResponse(response *openai.ChatCompletion) (*openai.ChatCompletionMessageToolCall, *errs.AppError) {
@@ -89,14 +86,14 @@ func getToolCallFromResponse(response *openai.ChatCompletion) (*openai.ChatCompl
 	return &toolCalls[0], nil
 }
 
-func createParams(model shared.ChatModel, message string) openai.ChatCompletionNewParams {
+func createParams(model shared.ChatModel, options []string, message string) openai.ChatCompletionNewParams {
 
 	messages := []openai.ChatCompletionMessageParamUnion{
 		//openai.DeveloperMessage("You are a bee hive management system assistant, always answer in brazilian portuguese and be friendly, but keep answers short."),
 		openai.UserMessage(message),
 	}
 
-	tools := GetAllTools()
+	tools := GetTools(options)
 
 	return openai.ChatCompletionNewParams{
 		Messages: messages,

@@ -3,6 +3,7 @@ package openai
 import (
 	"bombus/domain/chatbot"
 	"context"
+	"reflect"
 	"testing"
 
 	"github.com/openai/openai-go/shared"
@@ -20,18 +21,20 @@ func TestOpenAIParser_Parse(t *testing.T) {
 
 	ctx := context.Background()
 
+	options := []string{chatbot.ListColmeias.String(), chatbot.AddColmeiaForm.String()}
+
 	t.Run("use deprecated model, should return external API request error", func(t *testing.T) {
 		parser := NewOpenAIParser(APIKey, deprecatedModel)
 
 		message := "some message"
 
-		action, err := parser.Parse(ctx, message)
+		actionName, actionParams, err := parser.Parse(ctx, []string{}, message)
 
 		if err == nil {
 			t.Errorf("expected an error, got nil")
 		}
-		if action != nil {
-			t.Errorf("expected action to be nil, got %+v", action)
+		if actionName != "" || actionParams != nil {
+			t.Errorf("expected action name and params to be empty, got %+v and %+v", actionName, actionParams)
 		}
 	})
 
@@ -40,13 +43,13 @@ func TestOpenAIParser_Parse(t *testing.T) {
 
 		message := "some message"
 
-		action, err := parser.Parse(ctx, message)
+		actionName, actionParams, err := parser.Parse(ctx, []string{}, message)
 
 		if err == nil {
 			t.Errorf("expected an error, got nil")
 		}
-		if action != nil {
-			t.Errorf("expected action to be nil, got %+v", action)
+		if actionName != "" || actionParams != nil {
+			t.Errorf("expected action name and params to be empty, got %+v and %+v", actionName, actionParams)
 		}
 	})
 
@@ -55,18 +58,19 @@ func TestOpenAIParser_Parse(t *testing.T) {
 
 		message := "listar"
 
-		action, err := parser.Parse(ctx, message)
+		actionName, actionParams, err := parser.Parse(ctx, options, message)
 
-		expAction := chatbot.Action{
-			Name:   chatbot.ListColmeia,
-			Params: map[string]string{},
-		}
+		expActionName := chatbot.ListColmeias.String()
+		expActionParams := map[string]string{}
 
 		if err != nil {
 			t.Errorf("expected error to be nil, got %v", err)
 		}
-		if action.Name != expAction.Name {
-			t.Errorf("expected action name to be %s, got %s", expAction.Name, action.Name)
+		if actionName != expActionName {
+			t.Errorf("expected action name to be %s, got %s", expActionName, actionName)
+		}
+		if !reflect.DeepEqual(actionParams, expActionParams) {
+			t.Errorf("expected action params to be %v, got %v", expActionParams, actionParams)
 		}
 	})
 
@@ -75,21 +79,19 @@ func TestOpenAIParser_Parse(t *testing.T) {
 
 		message := "listar colmeias com status 'em desenvolvimento'"
 
-		action, err := parser.Parse(ctx, message)
+		actionName, actionParams, err := parser.Parse(ctx, options, message)
 
-		expAction := chatbot.Action{
-			Name:   chatbot.ListColmeia,
-			Params: map[string]string{"status": "em desenvolvimento"},
-		}
+		expActionName := chatbot.ListColmeias.String()
+		expActionParams := map[string]string{"status": "em desenvolvimento"}
 
 		if err != nil {
 			t.Errorf("expected error to be nil, got %v", err)
 		}
-		if action.Name != expAction.Name {
-			t.Errorf("expected action name to be %s, got %s", expAction.Name, action.Name)
+		if actionName != expActionName {
+			t.Errorf("expected action name to be %s, got %s", expActionName, actionName)
 		}
-		if action.Params["status"] != expAction.Params["status"] {
-			t.Errorf("expected action params to be %v, got %v", expAction.Params, action.Params)
+		if actionParams["status"] != expActionParams["status"] {
+			t.Errorf("expected action params to be %v, got %v", expActionParams, actionParams)
 		}
 	})
 
@@ -98,21 +100,19 @@ func TestOpenAIParser_Parse(t *testing.T) {
 
 		message := "listar colmeias com status 'com mel' e espécie 'melipona bicolor'"
 
-		action, err := parser.Parse(ctx, message)
+		actionName, actionParams, err := parser.Parse(ctx, options, message)
 
-		expAction := chatbot.Action{
-			Name:   chatbot.ListColmeia,
-			Params: map[string]string{"status": "com mel", "species": "Melipona Bicolor"},
-		}
+		expActionName := chatbot.ListColmeias.String()
+		expActionParams := map[string]string{"status": "com mel", "species": "Melipona Bicolor"}
 
 		if err != nil {
 			t.Errorf("expected error to be nil, got %v", err)
 		}
-		if action.Name != expAction.Name {
-			t.Errorf("expected action name to be %s, got %s", expAction.Name, action.Name)
+		if actionName != expActionName {
+			t.Errorf("expected action name to be %s, got %s", expActionName, actionName)
 		}
-		if action.Params["status"] != expAction.Params["status"] || action.Params["species"] != expAction.Params["species"] {
-			t.Errorf("expected action params to be %v, got %v", expAction.Params, action.Params)
+		if actionParams["status"] != expActionParams["status"] || actionParams["species"] != expActionParams["species"] {
+			t.Errorf("expected action params to be %v, got %v", expActionParams, actionParams)
 		}
 	})
 }
