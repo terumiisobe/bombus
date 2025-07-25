@@ -1,8 +1,8 @@
 package repository
 
-import "bombus/domain"
+import "bombus/domain/chatbot"
 
 type InteractionRepository interface {
-	GetTextByType(domain.InteractionType) string
-	GenerateText(domain.InteractionType, string) string
+	GetTextByType(chatbot.InteractionType) string
+	GenerateText(chatbot.InteractionType, string) string
 }

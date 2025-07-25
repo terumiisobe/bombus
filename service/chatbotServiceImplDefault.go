@@ -2,6 +2,7 @@ package service
 
 import (
 	"bombus/domain"
+	"bombus/domain/chatbot"
 	"bombus/errs"
 	"bombus/repository"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 )
 
 type ChatbotServiceImplDefault struct {
-	userInteractionStateMap map[string]domain.InteractionType
+	userInteractionStateMap map[string]chatbot.InteractionType
 	stateLock               *sync.Mutex
 	interactionRepo         repository.InteractionRepository
 
@@ -22,14 +23,14 @@ type ChatbotServiceImplDefault struct {
 
 func NewChatbotService(interactionRepo repository.InteractionRepository, cs ColmeiaService) ChatbotServiceImplDefault {
 	return ChatbotServiceImplDefault{
-		userInteractionStateMap: make(map[string]domain.InteractionType),
+		userInteractionStateMap: make(map[string]chatbot.InteractionType),
 		stateLock:               new(sync.Mutex),
 		interactionRepo:         interactionRepo,
 		colmeiaService:          cs,
 	}
 }
 
-func NewChatbotServiceCustomMap(r repository.InteractionRepository, m map[string]domain.InteractionType, cs ColmeiaService) ChatbotServiceImplDefault {
+func NewChatbotServiceCustomMap(r repository.InteractionRepository, m map[string]chatbot.InteractionType, cs ColmeiaService) ChatbotServiceImplDefault {
 	return ChatbotServiceImplDefault{
 		userInteractionStateMap: m,
 		stateLock:               new(sync.Mutex),
@@ -57,45 +58,45 @@ func (cs ChatbotServiceImplDefault) processInteractionAndGenerateResponse(user, 
 	return response
 }
 
-func GetNextInteraction(state domain.InteractionType, input string) (domain.InteractionType, *errs.AppError) {
+func GetNextInteraction(state chatbot.InteractionType, input string) (chatbot.InteractionType, *errs.AppError) {
 	err := ValidateInput(state, input)
 
-	if state == domain.MainMenu && input == "1" {
-		return domain.ListColmeias, nil
+	if state == chatbot.MainMenu && input == "1" {
+		return chatbot.ListColmeias, nil
 	}
-	if state == domain.MainMenu && input == "2" {
-		return domain.AddColmeiaForm, nil
+	if state == chatbot.MainMenu && input == "2" {
+		return chatbot.AddColmeiaForm, nil
 	}
-	if state == domain.MainMenu && input == "3" {
-		return domain.AddBatchColmeiaForm, nil
+	if state == chatbot.MainMenu && input == "3" {
+		return chatbot.AddBatchColmeiaForm, nil
 	}
-	if state == domain.ListColmeias {
-		return domain.Init, nil
+	if state == chatbot.ListColmeias {
+		return chatbot.Init, nil
 	}
-	if state == domain.AddColmeiaForm || state == domain.AddBatchColmeiaForm {
+	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeiaForm {
 		if err != nil {
-			return domain.AddFail, err
+			return chatbot.AddFail, err
 		}
-		return domain.AddSuccess, nil
+		return chatbot.AddSuccess, nil
 	}
 
-	return domain.MainMenu, err
+	return chatbot.MainMenu, err
 }
 
 // impure function
-func (cs ChatbotServiceImplDefault) executeAction(state domain.InteractionType, input string) (string, *errs.AppError) {
-	if state == domain.ListColmeias {
+func (cs ChatbotServiceImplDefault) executeAction(state chatbot.InteractionType, input string) (string, *errs.AppError) {
+	if state == chatbot.ListColmeias {
 		countBySpecies, err := cs.colmeiaService.CountBySpecies()
 		if err != nil {
 			return "", err
 		}
 		return convertMapToString(countBySpecies), nil
 	}
-	if state == domain.AddColmeiaForm {
+	if state == chatbot.AddColmeiaForm {
 		// TODO: call create colmeia
 		return "", nil
 	}
-	if state == domain.AddBatchColmeiaForm {
+	if state == chatbot.AddBatchColmeiaForm {
 		// TODO: call create batch colmeia
 		return "", nil
 	}
@@ -116,56 +117,56 @@ func convertMapToString(m map[string]int) string {
 	return strings.Join(lines, "\n")
 }
 
-func (cs ChatbotServiceImplDefault) GenerateMessage(state domain.InteractionType, input string) string {
-	if state == domain.AddColmeiaForm {
+func (cs ChatbotServiceImplDefault) GenerateMessage(state chatbot.InteractionType, input string) string {
+	if state == chatbot.AddColmeiaForm {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.AddFail, err.Message)
+			return cs.interactionRepo.GenerateText(chatbot.AddFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(domain.AddSuccess)
+		return cs.interactionRepo.GetTextByType(chatbot.AddSuccess)
 	}
-	if state == domain.AddBatchColmeiaForm {
+	if state == chatbot.AddBatchColmeiaForm {
 		err := ValidateInput(state, input)
 		if err != nil {
-			return cs.interactionRepo.GenerateText(domain.AddFail, err.Message)
+			return cs.interactionRepo.GenerateText(chatbot.AddFail, err.Message)
 		}
-		return cs.interactionRepo.GetTextByType(domain.AddSuccess)
+		return cs.interactionRepo.GetTextByType(chatbot.AddSuccess)
 	}
-	if state == domain.ListColmeias {
-		return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	if state == chatbot.ListColmeias {
+		return cs.interactionRepo.GetTextByType(chatbot.MainMenu)
 	}
 	if input == "1" {
-		return cs.interactionRepo.GetTextByType(domain.ListColmeias)
+		return cs.interactionRepo.GetTextByType(chatbot.ListColmeias)
 	}
 	if input == "2" {
-		return cs.interactionRepo.GetTextByType(domain.AddColmeiaForm)
+		return cs.interactionRepo.GetTextByType(chatbot.AddColmeiaForm)
 	}
 	if input == "3" {
-		return cs.interactionRepo.GetTextByType(domain.AddBatchColmeiaForm)
+		return cs.interactionRepo.GetTextByType(chatbot.AddBatchColmeiaForm)
 	}
-	return cs.interactionRepo.GetTextByType(domain.MainMenu)
+	return cs.interactionRepo.GetTextByType(chatbot.MainMenu)
 }
 
-func ValidateInput(state domain.InteractionType, input string) *errs.AppError {
+func ValidateInput(state chatbot.InteractionType, input string) *errs.AppError {
 	valid := []string{"1", "2", "3"}
-	if state == domain.MainMenu && !containsString(valid, input) {
+	if state == chatbot.MainMenu && !containsString(valid, input) {
 		return errs.NewValidationError("Opção inválida.")
 	}
-	if state == domain.AddColmeiaForm || state == domain.AddBatchColmeiaForm {
+	if state == chatbot.AddColmeiaForm || state == chatbot.AddBatchColmeiaForm {
 		formValues := convertToFormValues(input)
 		return ValidateForm(state, formValues)
 	}
 	return nil
 }
 
-func ValidateForm(formType domain.InteractionType, formValues []string) *errs.AppError {
+func ValidateForm(formType chatbot.InteractionType, formValues []string) *errs.AppError {
 	addColmeiaFormSizes := []int{3, 4}
 	addBatchColmeiaFormSizes := []int{4, 5}
-	if formType == domain.AddColmeiaForm && !containsInt(addColmeiaFormSizes, len(formValues)) {
+	if formType == chatbot.AddColmeiaForm && !containsInt(addColmeiaFormSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
-	if formType == domain.AddBatchColmeiaForm && !containsInt(addBatchColmeiaFormSizes, len(formValues)) {
+	if formType == chatbot.AddBatchColmeiaForm && !containsInt(addBatchColmeiaFormSizes, len(formValues)) {
 		return errs.NewValidationError("Número incorreto de linhas.")
 	}
 
@@ -185,7 +186,7 @@ func ValidateForm(formType domain.InteractionType, formValues []string) *errs.Ap
 	return nil
 }
 
-func getValidationsPerFormValue(interactiontype domain.InteractionType, formSize int) map[int]func(string) bool {
+func getValidationsPerFormValue(interactiontype chatbot.InteractionType, formSize int) map[int]func(string) bool {
 
 	validationPerFormValue := make(map[int]func(string) bool)
 	if formSize == 3 {
@@ -193,13 +194,13 @@ func getValidationsPerFormValue(interactiontype domain.InteractionType, formSize
 		validationPerFormValue[1] = isValidStartingDate
 		validationPerFormValue[2] = isValidStatus
 	}
-	if formSize == 4 && interactiontype == domain.AddColmeiaForm {
+	if formSize == 4 && interactiontype == chatbot.AddColmeiaForm {
 		validationPerFormValue[0] = isValidQRCode
 		validationPerFormValue[1] = isValidSpecies
 		validationPerFormValue[2] = isValidStartingDate
 		validationPerFormValue[3] = isValidStatus
 	}
-	if formSize == 4 && interactiontype == domain.AddBatchColmeiaForm {
+	if formSize == 4 && interactiontype == chatbot.AddBatchColmeiaForm {
 		validationPerFormValue[0] = isValidQuantity
 		validationPerFormValue[1] = isValidSpecies
 		validationPerFormValue[2] = isValidStartingDate
@@ -275,11 +276,11 @@ func containsString(slice []string, value string) bool {
 	return false
 }
 
-func (cs *ChatbotServiceImplDefault) updateUserInteractionState(user string, state domain.InteractionType) {
+func (cs *ChatbotServiceImplDefault) updateUserInteractionState(user string, state chatbot.InteractionType) {
 
 }
 
-func (cs *ChatbotServiceImplDefault) setStateWithLock(user string, currentState domain.InteractionType) {
+func (cs *ChatbotServiceImplDefault) setStateWithLock(user string, currentState chatbot.InteractionType) {
 	log.Printf("Setting state from: %s to: %s", cs.userInteractionStateMap[user], currentState)
 	cs.stateLock.Lock()
 	cs.userInteractionStateMap[user] = currentState

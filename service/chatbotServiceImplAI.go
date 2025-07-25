@@ -1,13 +1,13 @@
 package service
 
 import (
-	"bombus/domain"
+	"bombus/domain/chatbot"
 	"bombus/repository"
 	"sync"
 )
 
 type ChatbotServiceImplAI struct {
-	userInteractionStateMap map[string]domain.InteractionType
+	userInteractionStateMap map[string]chatbot.InteractionType
 	stateLock               *sync.Mutex
 	interactionRepo         repository.InteractionRepository
 
