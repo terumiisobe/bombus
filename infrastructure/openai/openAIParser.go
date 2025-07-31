@@ -61,7 +61,7 @@ func convertToolCallToAction(toolCall *openai.ChatCompletionMessageToolCall) (st
 		// Parse the arguments JSON string into a map
 		argsMap := make(map[string]interface{})
 		if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &argsMap); err != nil {
-			return "", nil, errs.NewJsonConversionError(fmt.Sprintf("failed to parse function arguments: %s", err.Error()))
+			return "", nil, errs.NewParsingError(fmt.Sprintf("failed to parse function arguments: %s", err.Error()))
 		}
 
 		// Convert interface{} values to strings
@@ -81,7 +81,7 @@ func convertToolCallToAction(toolCall *openai.ChatCompletionMessageToolCall) (st
 func getToolCallFromResponse(response *openai.ChatCompletion) (*openai.ChatCompletionMessageToolCall, *errs.AppError) {
 	toolCalls := response.Choices[0].Message.ToolCalls
 	if len(toolCalls) == 0 {
-		return nil, errs.NewUnexpectedError("No function call in AI response")
+		return nil, errs.NewParsingError("AI could not find a tool call in the response")
 	}
 	return &toolCalls[0], nil
 }

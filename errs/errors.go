@@ -60,3 +60,10 @@ func NewExternalAPIRequestError(message string) *AppError {
 		Message: fmt.Sprintf("External API request error: %s", message),
 	}
 }
+
+func NewParsingError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusInternalServerError,
+		Message: fmt.Sprintf("Parsing error: %s", message),
+	}
+}
