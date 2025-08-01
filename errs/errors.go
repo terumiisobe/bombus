@@ -22,7 +22,7 @@ func IsEqual(oneErr *AppError, anotherErr *AppError) bool {
 func NewNotFoundError(message string) *AppError {
 	return &AppError{
 		Code:    http.StatusNotFound,
-		Message: message,
+		Message: fmt.Sprintf("Not found error: %s", message),
 	}
 }
 
