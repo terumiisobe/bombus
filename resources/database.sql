@@ -16,16 +16,17 @@ DROP TABLE IF EXISTS bombus.species;
 
 CREATE TABLE bombus.species (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL UNIQUE
+  scientificName VARCHAR(50) NOT NULL UNIQUE,
+  commonName VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO bombus.species (id, name) VALUES
-  (1, "TetragosniscaAngustula"),
-  (2, "PlebeiaSp"),
-  (3, "MeliponaQuadrifasciata"),
-  (4, "MeliponaBicolor"),
-  (5, "ScaptotrigonaBipunctata"),
-  (6, "ScaptotrigonaDepilis");
+INSERT INTO bombus.species (id, scientificName, commonName) VALUES
+  (1, "Tetragosnisca Angustula" "Jataí"),
+  (2, "Plebeia Sp.", "Mirim"),
+  (3, "Melipona Quadrifasciata", "Mandaçaia"),
+  (4, "Melipona Bicolor", "Uruçu"),
+  (5, "Scaptotrigona Bipunctata" , "Tubuna"),
+  (6, "Scaptotrigona Depilis", "Canudo");
 
 DROP TABLE IF EXISTS bombus.colmeias;
 
