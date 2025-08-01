@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"bombus/domain"
@@ -15,6 +16,8 @@ import (
 type ColmeiaRepositoryImplDB struct {
 	client *sql.DB
 }
+
+//TODO: refactor errors
 
 func NewColmeiaRepositoryDB() ColmeiaRepositoryImplDB {
 	client, err := sql.Open("mysql", "bombus_usr:bombuspass@tcp(localhost:3306)/bombus?parseTime=true")
@@ -103,4 +106,34 @@ func (d ColmeiaRepositoryImplDB) Create(colmeia domain.Colmeia) *errs.AppError {
 	}
 
 	return nil
+}
+
+func (d ColmeiaRepositoryImplDB) Count(species *domain.Species, status *domain.Status) (int, *errs.AppError) {
+	query := "SELECT COUNT(*) FROM colmeias"
+	var conditions []string
+	var args []interface{}
+
+	if species != nil {
+		conditions = append(conditions, "species_id = ?")
+		args = append(args, species.String())
+	}
+
+	if status != nil {
+		conditions = append(conditions, "status_id = ?")
+		args = append(args, status.String())
+	}
+
+	if len(conditions) > 0 {
+		query += " WHERE " + strings.Join(conditions, " AND ")
+	}
+
+	var count int
+	err := d.client.QueryRow(query, args...).Scan(&count)
+	if err != nil {
+		e := errs.NewDatabaseError(err.Error())
+		log.Println("[ColmeiaRepositoryDB | Count]", e.Message)
+		return 0, e
+	}
+
+	return count, nil
 }

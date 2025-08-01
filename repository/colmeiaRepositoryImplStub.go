@@ -50,6 +50,16 @@ func (s ColmeiaRepositoryImplStub) Create(colmeia domain.Colmeia) *errs.AppError
 	return nil
 }
 
+func (s ColmeiaRepositoryImplStub) Count(species *domain.Species, status *domain.Status) (int, *errs.AppError) {
+	count := 0
+	for _, colmeia := range s.colmeias {
+		if colmeia.Species == *species && colmeia.Status == *status {
+			count++
+		}
+	}
+	return count, nil
+}
+
 func (s ColmeiaRepositoryImplStub) CountBySpecies() (map[string]int, *errs.AppError) {
 	count := make(map[string]int)
 	for _, colmeia := range s.colmeias {
