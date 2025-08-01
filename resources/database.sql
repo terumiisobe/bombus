@@ -1,17 +1,3 @@
-DROP TABLE IF EXISTS bombus.status;
-
-CREATE TABLE bombus.status (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  value VARCHAR(50) NOT NULL UNIQUE
-);
-
-INSERT INTO bombus.status (id, value) VALUES
-  (1, "HoneyReady"),
-  (2, "Induzida"),
-  (3, "Developing"),
-  (4, "Pet"),
-  (5, "Empty");
-
 DROP TABLE IF EXISTS bombus.species;
 
 CREATE TABLE bombus.species (
@@ -39,7 +25,6 @@ CREATE TABLE bombus.colmeias (
   status_id INT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (species_id) REFERENCES bombus.species(id),
-  FOREIGN KEY (status_id) REFERENCES bombus.status(id)
 );
 
 INSERT INTO bombus.colmeias (id, colmeia_id, qr_code, species_id, starting_date, status_id) VALUES

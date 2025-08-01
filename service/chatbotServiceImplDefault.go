@@ -90,7 +90,11 @@ func (cs ChatbotServiceImplDefault) executeAction(state chatbot.InteractionType,
 		if err != nil {
 			return "", err
 		}
-		return convertMapToString(countBySpecies), nil
+		countBySpeciesString := make(map[string]int)
+		for species, count := range countBySpecies {
+			countBySpeciesString[species.GetCommonName()] = count
+		}
+		return convertMapToString(countBySpeciesString), nil
 	}
 	if state == chatbot.AddColmeiaForm {
 		// TODO: call create colmeia
@@ -228,8 +232,7 @@ func isValidQRCode(v string) bool {
 }
 
 func isValidSpecies(v string) bool {
-	err := domain.ValidateSpecies(v)
-	return err == nil
+	return true
 }
 
 func isValidStartingDate(v string) bool {

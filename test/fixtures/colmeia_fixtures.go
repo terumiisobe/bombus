@@ -26,7 +26,7 @@ func (f *ColmeiaFixtures) SingleColmeia() []domain.Colmeia {
 	return []domain.Colmeia{
 		builders.NewColmeiaBuilder().
 			WithID(1).
-			WithSpecies(domain.TetragosniscaAngustula).
+			WithSpecies(domain.NewSpecies(1, "Tetragosnisca Angustula", "Jataí")).
 			WithStatus(domain.Developing).
 			Build(),
 	}
@@ -37,7 +37,7 @@ func (f *ColmeiaFixtures) MultipleColmeiaSameSpecies() []domain.Colmeia {
 	return []domain.Colmeia{
 		builders.NewColmeiaBuilder().WithID(1).WithStatus(domain.HoneyReady).Build(),
 		builders.NewColmeiaBuilder().WithID(2).WithStatus(domain.Developing).Build(),
-		builders.NewColmeiaBuilder().WithID(3).WithStatus(domain.PetBottle).Build(),
+		builders.NewColmeiaBuilder().WithID(3).WithStatus(domain.Unknown).Build(),
 	}
 }
 
@@ -46,18 +46,18 @@ func (f *ColmeiaFixtures) MultipleColmeiaDifferentSpecies() []domain.Colmeia {
 	return []domain.Colmeia{
 		builders.NewColmeiaBuilder().
 			WithID(1).
-			WithSpecies(domain.TetragosniscaAngustula).
+			WithSpecies(domain.NewSpecies(1, "Tetragosnisca Angustula", "Jataí")).
 			WithStatus(domain.HoneyReady).
 			Build(),
 		builders.NewColmeiaBuilder().
 			WithID(2).
-			WithSpecies(domain.PlebeiaSp).
+			WithSpecies(domain.NewSpecies(2, "Plebeia Sp", "Plebeia")).
 			WithStatus(domain.Developing).
 			Build(),
 		builders.NewColmeiaBuilder().
 			WithID(3).
-			WithSpecies(domain.MeliponaQuadrifasciata).
-			WithStatus(domain.PetBottle).
+			WithSpecies(domain.NewSpecies(3, "Melipona Quadrifasciata", "Melipona")).
+			WithStatus(domain.Unknown).
 			Build(),
 	}
 }
@@ -67,22 +67,22 @@ func (f *ColmeiaFixtures) MultipleColmeiaDifferentSpeciesAndStatus() []domain.Co
 	return []domain.Colmeia{
 		builders.NewColmeiaBuilder().
 			WithID(1).
-			WithSpecies(domain.TetragosniscaAngustula).
+			WithSpecies(domain.NewSpecies(1, "Tetragosnisca Angustula", "Jataí")).
 			WithStatus(domain.Developing).
 			Build(),
 		builders.NewColmeiaBuilder().
 			WithID(2).
-			WithSpecies(domain.PlebeiaSp).
+			WithSpecies(domain.NewSpecies(2, "Plebeia Sp", "Plebeia")).
 			WithStatus(domain.HoneyReady).
 			Build(),
 		builders.NewColmeiaBuilder().
 			WithID(3).
-			WithSpecies(domain.MeliponaQuadrifasciata).
-			WithStatus(domain.PetBottle).
+			WithSpecies(domain.NewSpecies(3, "Melipona Quadrifasciata", "Melipona")).
+			WithStatus(domain.Unknown).
 			Build(),
 		builders.NewColmeiaBuilder().
 			WithID(4).
-			WithSpecies(domain.MeliponaQuadrifasciata).
+			WithSpecies(domain.NewSpecies(3, "Melipona Quadrifasciata", "Melipona")).
 			WithStatus(domain.HoneyReady).
 			Build(),
 	}

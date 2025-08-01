@@ -45,7 +45,6 @@ func GetColmeiaListToolParams() openai.ChatCompletionToolParam {
 					},
 					"species": map[string]interface{}{
 						"type":        "string",
-						"enum":        domain.GetAllSpecies(),
 						"description": "Species of bee hive (optional)",
 					},
 				},
@@ -78,7 +77,6 @@ func GetColmeiaAddValidationToolParams() openai.ChatCompletionToolParam {
 					},
 					"species": map[string]interface{}{
 						"type":        "string",
-						"enum":        domain.GetAllSpecies(),
 						"description": "Species of bee hive (required)",
 					},
 					"starting_date": map[string]interface{}{

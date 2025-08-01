@@ -115,12 +115,12 @@ func (d ColmeiaRepositoryImplDB) Count(species *domain.Species, status *domain.S
 
 	if species != nil {
 		conditions = append(conditions, "species_id = ?")
-		args = append(args, species.String())
+		args = append(args, species.GetId())
 	}
 
 	if status != nil {
 		conditions = append(conditions, "status_id = ?")
-		args = append(args, status.String())
+		args = append(args, int(*status))
 	}
 
 	if len(conditions) > 0 {

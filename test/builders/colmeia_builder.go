@@ -16,7 +16,7 @@ func NewColmeiaBuilder() *ColmeiaBuilder {
 	return &ColmeiaBuilder{
 		colmeia: domain.Colmeia{
 			ID:           1,
-			Species:      domain.TetragosniscaAngustula,
+			Species:      domain.NewSpecies(1, "Tetragosnisca Angustula", "Jataí"),
 			StartingDate: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
 			Status:       domain.Developing,
 		},
@@ -65,7 +65,7 @@ func (b *ColmeiaBuilder) Build() domain.Colmeia {
 }
 
 func (b *ColmeiaBuilder) BuildDTO() dto.Colmeia {
-	species := b.colmeia.Species.String()
+	species := b.colmeia.Species.GetCommonName()
 	status := b.colmeia.Status.String()
 	startingDate := b.colmeia.StartingDate.Format(time.DateOnly)
 

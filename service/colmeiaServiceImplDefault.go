@@ -6,50 +6,73 @@ import (
 	"bombus/repository"
 )
 
-func NewColmeiaServiceImplDefault(repo repository.ColmeiaRepository) ColmeiaServiceImplDefault {
-	return ColmeiaServiceImplDefault{repo}
+type ColmeiaServiceImplDefault struct {
+	colmeiaRepo repository.ColmeiaRepository
+	speciesRepo repository.SpeciesRepository
 }
 
-type ColmeiaServiceImplDefault struct {
-	repo repository.ColmeiaRepository
+func NewColmeiaServiceImplDefault(colmeiaRepo repository.ColmeiaRepository, speciesRepo repository.SpeciesRepository) ColmeiaServiceImplDefault {
+	return ColmeiaServiceImplDefault{colmeiaRepo, speciesRepo}
 }
 
 func (s ColmeiaServiceImplDefault) GetAllColmeia(status string, species string) ([]domain.Colmeia, *errs.AppError) {
-	return s.repo.FindAll(status, species)
+	return s.colmeiaRepo.FindAll(status, species)
 }
 
 func (s ColmeiaServiceImplDefault) GetColmeia(id string) (*domain.Colmeia, *errs.AppError) {
-	return s.repo.ById(id)
+	return s.colmeiaRepo.ById(id)
 }
 
 func (s ColmeiaServiceImplDefault) CreateColmeia(colmeia domain.Colmeia) *errs.AppError {
-	return s.repo.Create(colmeia)
+	return s.colmeiaRepo.Create(colmeia)
 }
 
-func (s ColmeiaServiceImplDefault) CountBySpecies() (map[string]int, *errs.AppError) {
-	colmeias, err := s.repo.FindAll("", "")
+func (s ColmeiaServiceImplDefault) CountBySpecies() (map[domain.Species]int, *errs.AppError) {
+	allSpecies, err := s.speciesRepo.FindAll()
 	if err != nil {
 		return nil, err
 	}
 
-	countBySpecies := make(map[string]int)
-	for _, colmeia := range colmeias {
-		countBySpecies[colmeia.Species.String()]++
+	countBySpecies := make(map[domain.Species]int)
+	for _, species := range allSpecies {
+		count, err := s.colmeiaRepo.Count(&species, nil)
+		if err != nil {
+			return nil, err
+		}
+		countBySpecies[species] = count
 	}
 	return countBySpecies, nil
 }
-func (s ColmeiaServiceImplDefault) CountBySpeciesAndStatus() (map[string]map[string]int, *errs.AppError) {
-	colmeias, err := s.repo.FindAll("", "")
+
+func (s ColmeiaServiceImplDefault) CountByStatus() (map[domain.Status]int, *errs.AppError) {
+	countByStatus := make(map[domain.Status]int)
+	for statusNum := 1; statusNum <= domain.StatusCount; statusNum++ {
+		status := domain.Status(statusNum)
+		count, err := s.colmeiaRepo.Count(nil, &status)
+		if err != nil {
+			return nil, err
+		}
+		countByStatus[status] = count
+	}
+	return countByStatus, nil
+}
+
+func (s ColmeiaServiceImplDefault) CountBySpeciesAndStatus() (map[domain.Species]map[domain.Status]int, *errs.AppError) {
+	allSpecies, err := s.speciesRepo.FindAll()
 	if err != nil {
 		return nil, err
 	}
 
-	countBySpeciesAndStatus := make(map[string]map[string]int)
-	for _, colmeia := range colmeias {
-		if _, ok := countBySpeciesAndStatus[colmeia.Species.String()]; !ok {
-			countBySpeciesAndStatus[colmeia.Species.String()] = make(map[string]int)
+	countBySpeciesAndStatus := make(map[domain.Species]map[domain.Status]int)
+	for _, species := range allSpecies {
+		for statusNum := 1; statusNum <= domain.StatusCount; statusNum++ {
+			status := domain.Status(statusNum)
+			count, err := s.colmeiaRepo.Count(&species, &status)
+			if err != nil {
+				return nil, err
+			}
+			countBySpeciesAndStatus[species][status] = count
 		}
-		countBySpeciesAndStatus[colmeia.Species.String()][colmeia.Status.String()]++
 	}
 	return countBySpeciesAndStatus, nil
 }

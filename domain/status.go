@@ -9,30 +9,30 @@ import (
 type Status int
 
 const (
-	HoneyReady Status = iota + 1
-	Induzida
-	Developing
-	MelgueiraReady
-	PetBottle
-	Empty
+	HoneyReady     Status = 1
+	Induzida       Status = 2
+	MelgueiraReady Status = 3
+	Developing     Status = 4
+	Empty          Status = 5
+	Unknown        Status = 6
 )
 
-const StatusCount = 5
+const StatusCount = 6
 
 func (s Status) String() string {
 	switch s {
 	case HoneyReady:
-		return "com mel"
+		return "Com mel"
 	case Induzida:
-		return "induzida"
+		return "Induzida"
 	case MelgueiraReady:
-		return "pronto para melgueira"
+		return "Pronto para melgueira"
 	case Developing:
-		return "em desenvolvimento"
+		return "Em desenvolvimento"
 	case Empty:
-		return "vazia"
+		return "Vazia"
 	default:
-		return "desconhecido"
+		return "Desconhecido"
 	}
 }
 
@@ -50,10 +50,14 @@ func ParseStatus(s string) (Status, error) {
 		return Developing, nil
 	case HoneyReady.String():
 		return HoneyReady, nil
-	case PetBottle.String():
-		return PetBottle, nil
+	case MelgueiraReady.String():
+		return MelgueiraReady, nil
+	case Developing.String():
+		return Developing, nil
+	case Empty.String():
+		return Empty, nil
 	default:
-		return Status(0), fmt.Errorf("invalid status: %s", s)
+		return Unknown, fmt.Errorf("invalid status: %s", s)
 	}
 }
 func GetAllStatus() []string {
@@ -63,5 +67,6 @@ func GetAllStatus() []string {
 		MelgueiraReady.String(),
 		Developing.String(),
 		Empty.String(),
+		Unknown.String(),
 	}
 }
