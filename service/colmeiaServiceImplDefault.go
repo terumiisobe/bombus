@@ -65,6 +65,7 @@ func (s ColmeiaServiceImplDefault) CountBySpeciesAndStatus() (map[domain.Species
 
 	countBySpeciesAndStatus := make(map[domain.Species]map[domain.Status]int)
 	for _, species := range allSpecies {
+		countBySpeciesAndStatus[species] = make(map[domain.Status]int)
 		for statusNum := 1; statusNum <= domain.StatusCount; statusNum++ {
 			status := domain.Status(statusNum)
 			count, err := s.colmeiaRepo.Count(&species, &status)
