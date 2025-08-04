@@ -2,7 +2,7 @@ package builders
 
 import (
 	"bombus/domain"
-	"bombus/service/dto"
+	"bombus/dto"
 	"time"
 )
 
