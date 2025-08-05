@@ -18,10 +18,13 @@ var AppConfig *config.Config
 
 func Start() {
 
+	env := os.Getenv("ENV")
+	fmt.Println("ENV value is:", env) // Debugging
+
 	if os.Getenv("ENV") != "PRODUCTION" {
 		err := godotenv.Load()
 		if err != nil {
-			log.Fatal("Error loading .env file")
+			log.Println("Error loading .env file (non-fatal):", err)
 		}
 	}
 
