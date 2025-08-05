@@ -1,14 +1,14 @@
 package app
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
 	"bombus/config"
 	"bombus/domain"
 	"bombus/repository"
 	"bombus/service"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -17,9 +17,12 @@ import (
 var AppConfig *config.Config
 
 func Start() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+
+	if os.Getenv("ENV") != "PRODUCTION" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	AppConfig = config.NewConfig()
