@@ -51,7 +51,11 @@ func Start() {
 	router.HandleFunc("/greet", greet)
 
 	// start server
-	log.Fatal(http.ListenAndServe("localhost:8080", router))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 func greet(w http.ResponseWriter, r *http.Request) {
