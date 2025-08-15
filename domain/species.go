@@ -9,12 +9,15 @@ import (
 type Species int
 
 const (
-	TetragosniscaAngustula Species = iota + 1
-	PlebeiaSp
-	MeliponaQuadrifasciata
-	MeliponaBicolor
-	ScaptotrigonaBipunctata
-	ScaptotrigonaDepilis
+	TetragosniscaAngustula  Species = iota + 1 //jataí
+	PlebeiaSp                                  //mirim genérica
+	MeliponaQuadrifasciata                     //mandaçaia
+	MeliponaBicolor                            //guaraipo
+	ScaptotrigonaBipunctata                    //tubuna
+	ScaptotrigonaDepilis                       //canudo
+	PlebeiaGigantea                            //mirim-guaçu
+	PlebeiaEmerina                             //mirim-emerina
+	MeliponaMarginata                          //manduri
 )
 
 const SpeciesCount = 6
@@ -33,6 +36,12 @@ func (s Species) String() string {
 		return "Scaptotrigona Depilis"
 	case MeliponaBicolor:
 		return "Melipona Bicolor"
+	case PlebeiaGigantea:
+		return "Plebeia Gigantea"
+	case PlebeiaEmerina:
+		return "Plebeia Emerina"
+	case MeliponaMarginata:
+		return "Melipona Marginata"
 	default:
 		return "Espécie Desconhecida"
 	}
@@ -54,6 +63,12 @@ func ParseSpecies(s string) (Species, error) {
 		return PlebeiaSp, nil
 	case MeliponaQuadrifasciata.String():
 		return MeliponaQuadrifasciata, nil
+	case MeliponaBicolor.String():
+		return MeliponaBicolor, nil
+	case ScaptotrigonaBipunctata.String():
+		return ScaptotrigonaBipunctata, nil
+	case ScaptotrigonaDepilis.String():
+		return ScaptotrigonaDepilis, nil
 	default:
 		return Species(0), fmt.Errorf("invalid species: %s", s)
 	}
@@ -66,5 +81,8 @@ func GetAllSpecies() []string {
 		MeliponaBicolor.String(),
 		ScaptotrigonaBipunctata.String(),
 		ScaptotrigonaDepilis.String(),
+		PlebeiaGigantea.String(),
+		PlebeiaEmerina.String(),
+		MeliponaMarginata.String(),
 	}
 }
