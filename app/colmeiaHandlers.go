@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"bombus/domain"
+	"bombus/mapper"
 	"bombus/service"
 
 	"github.com/gorilla/mux"
@@ -31,7 +32,7 @@ func (ch *ColmeiaHandler) getAllColmeias(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		writeResponse(w, err.Code, err.AsMessage())
 	} else {
-		writeResponse(w, http.StatusOK, colmeias)
+		writeResponse(w, http.StatusOK, mapper.ToDTOList(colmeias))
 	}
 }
 
